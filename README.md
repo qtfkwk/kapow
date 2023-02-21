@@ -16,15 +16,15 @@ Directive | Description
 
 Directive | Example | Description
 ---|---|---
-`` `!now` `` | 2023-02-21T15:26:23Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Tue 21 Feb 2023 10:26:23 EST | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Tuesday 10:26 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Tue 21 Feb 2023 08:26:23 MST | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Tuesday 08:26 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Tue 21 Feb 2023 05:26:23 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Tuesday 05:26 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Tuesday 15:26 | Current date/time in UTC and custom format
-`` `!now:x` `` | Xh1KFQN | Current date/time in "x" format
+`` `!now` `` | 2023-02-21T17:27:57Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Tue 21 Feb 2023 12:27:57 EST | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Tuesday 12:27 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Tue 21 Feb 2023 10:27:57 MST | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Tuesday 10:27 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Tue 21 Feb 2023 07:27:57 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Tuesday 07:27 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Tuesday 17:27 | Current date/time in UTC and custom format
+`` `!now:x` `` | Xh1KHRv | Current date/time in "x" format
 
 * Span directives must be placed inside a code span and may appear zero or more times in any line
 * Disable processing a span directive by escaping `!` with a backslash: `\!`
@@ -33,7 +33,7 @@ Directive | Example | Description
 
 ```text
 $ kapow -V
-kapow 1.0.0
+kapow 1.0.1
 ```
 
 ```text
@@ -63,4 +63,9 @@ Options:
     * `!inc:VERSION.md`
     * `!inc:USAGE.md`
     * `` `!now` ``
+
+# Changelog
+
+* 1.0.0 (2023-02-21): Initial release
+* 1.0.1 (2023-02-21): Update dependencies
 

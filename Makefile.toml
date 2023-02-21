@@ -21,7 +21,7 @@ dependencies = ["outdated", "audit"]
 
 [tasks.update]
 script = '''
-cargo upgrade
+cargo upgrade --incompatible
 cargo update
 '''
 

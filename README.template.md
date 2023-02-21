@@ -48,3 +48,8 @@ Directive | Example | Description
     * `!inc:USAGE.md`
     * `` `\!now` ``
 
+# Changelog
+
+* 1.0.0 (2023-02-21): Initial release
+* 1.0.1 (2023-02-21): Update dependencies
+
