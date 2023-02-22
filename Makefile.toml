@@ -49,9 +49,9 @@ cargo build --release --color=always
 [tasks.readme]
 dependencies = ["prebuild"]
 script = '''
-./target/release/kapow VERSION.template.md >VERSION.md
-./target/release/kapow USAGE.template.md >USAGE.md
-./target/release/kapow README.template.md >README.md
+./target/release/kapow t/version/VERSION.template.md >t/version/VERSION.md
+./target/release/kapow t/usage/USAGE.template.md >t/usage/USAGE.md
+./target/release/kapow t/README.template.md >README.md
 '''
 
 [tasks.build]
@@ -82,20 +82,12 @@ cargo test --release --color=always -- --nocapture --test-threads=1 2>&1 |less -
 [tasks.watch]
 script = '''
 #!/bin/sh
-ARGS="Cargo.toml Makefile.toml *.template.md src"
+ARGS="Cargo.toml Makefile.toml src t"
 run() { echo "\`\`\`\n\$ $@"; $@; e=$?; echo "\`\`\`\n"; return $e; }
 sum() { find ${ARGS} -type f |sort |xargs b3sum; }
-build() { run date; run cargo make; }
+build() { run dtg -ax; run cargo make; }
 echo; sum >.watch1; build; while true; do inotifywait -qqr ${ARGS}; sum >.watch2;
 if ! diff .watch1 .watch2; then clear; build; fi; mv .watch2 .watch1; done
-'''
-
-[tasks.bench]
-alias = "my-bench"
-
-[tasks.my-bench]
-script = '''
-cargo bench
 '''
 
 [tasks.clippy]
@@ -104,11 +96,6 @@ alias = "my-clippy"
 [tasks.my-clippy]
 script = '''
 cargo clippy --release --color=always -- -D clippy::all
-'''
-
-[tasks.doc]
-script = '''
-cargo doc --color=always --no-deps
 '''
 
 [tasks.clean]
