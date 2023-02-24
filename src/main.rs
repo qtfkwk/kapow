@@ -1,6 +1,7 @@
 use clap::Parser;
 use dtg_lib::{tz, Dtg};
 use lazy_static::lazy_static;
+use pager::Pager;
 use regex::{Captures, Regex};
 use std::io::BufRead;
 
@@ -33,6 +34,7 @@ lazy_static! {
 fn main() -> Result<(), String> {
     let cli = Cli::parse();
     if cli.readme {
+        Pager::with_pager("bat -pl md").setup();
         print!("{}", include_str!("../README.md"));
         std::process::exit(0);
     }

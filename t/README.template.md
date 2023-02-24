@@ -57,6 +57,7 @@ See the `readme` task in `Makefile.toml`:
   process path of included files relative to the containing file instead of the current directory;
   input and included file processed more efficiently via `BufReader` instead of `read_to_string`;
   improved error handling
+* 2.0.1 (2023-02-24): Use `bat -pl md` as readme pager if have it installed; update dependencies
 
 # Development
 

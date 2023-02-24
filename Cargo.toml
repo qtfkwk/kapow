@@ -1,6 +1,6 @@
 [package]
 name = "kapow"
-version = "2.0.0"
+version = "2.1.0"
 edition = "2021"
 authors = ["qtfkwk <qtfkwk@gmail.com>"]
 homepage = "https://github.com/qtfkwk/kapow"
@@ -11,5 +11,6 @@ license = "MIT"
 clap = { version = "4.1.6", features = ["derive", "wrap_help"] }
 dtg-lib = "5.0.0"
 lazy_static = "1.4.0"
+pager = "0.16.1"
 regex = "1.7.1"
 shlex = "1.1.0"
