@@ -59,6 +59,7 @@ See the `readme` task in `Makefile.toml`:
   improved error handling
 * 2.1.0 (2023-02-24): Use `bat -pl md` as readme pager if have it installed; update dependencies
 * 2.1.1 (2023-02-24): Fix readme
+* 2.1.2 (2023-02-24): Fix readme
 
 # Development
 
