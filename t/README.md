@@ -38,13 +38,13 @@ Directive | Example | Description
 
 See the `readme` task in `Makefile.toml`:
 
-* Generates `t/version/VERSION.md` from `t/version/VERSION.t.md`
+* Generates `t/VERSION.md` from `t/VERSION.t.md`
     * `!run:../target/release/kapow -V`
-* Generates `t/usage/USAGE.md` from `t/usage/USAGE.t.md`
+* Generates `t/USAGE.md` from `t/USAGE.t.md`
     * `!run:../target/release/kapow -h`
 * Generates `README.md` from `t/README.md`
-    * `!inc:version/VERSION.md`
-    * `!inc:usage/USAGE.md`
+    * `!inc:VERSION.md`
+    * `!inc:USAGE.md`
     * `` `\!now` `` (all variants)
 
 # Changelog
@@ -67,6 +67,7 @@ See the `readme` task in `Makefile.toml`:
 * 2.2.1 (2023-03-10): Remove shlex dependency
 * 2.2.2 (2023-03-10): Fix readme; error if no input file(s) provided
 * 2.2.3 (2023-03-10): Fix confict with readme option
+* 2.2.4 (2023-03-10): Fix readme
 
 # Development
 
