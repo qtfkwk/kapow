@@ -1,9 +1,11 @@
 use clap::Parser;
 use dtg_lib::{tz, Dtg};
+use execute::{shell, Execute};
 use lazy_static::lazy_static;
 use pager::Pager;
 use regex::{Captures, Regex};
 use std::io::BufRead;
+use std::process::Stdio;
 
 /// Print a message to stderr and exit with the given code
 macro_rules! exit {
@@ -43,11 +45,14 @@ fn main() -> Result<(), String> {
     let now_x = d.x_format();
     let now_local = d.default(&tz("local").ok());
     let mut command_q = vec![];
+    let original_dir = std::env::current_dir().expect("current directory");
     for input_file in &cli.input_files {
         match std::fs::File::open(input_file) {
             Ok(f) => {
                 let f = std::io::BufReader::new(f);
-                let dir = input_file.parent().unwrap();
+                let dir = input_file.parent().expect("input file parent");
+                std::env::set_current_dir(dir)
+                    .unwrap_or_else(|e| panic!("Could not change directory to {dir:?}: {e}"));
                 for line in f.lines() {
                     let line = line.unwrap();
                     if !command_q.is_empty() {
@@ -68,8 +73,7 @@ fn main() -> Result<(), String> {
                         }
                     } else if let Some(path) = line.strip_prefix("!inc:") {
                         // !inc:path
-                        let path = dir.join(path);
-                        match std::fs::File::open(&path) {
+                        match std::fs::File::open(path) {
                             Ok(f) => {
                                 let f = std::io::BufReader::new(f);
                                 for line in f.lines() {
@@ -102,6 +106,8 @@ fn main() -> Result<(), String> {
                         println!("{line}");
                     }
                 }
+                std::env::set_current_dir(&original_dir)
+                    .unwrap_or_else(|e| panic!("Could not change directory to {dir:?}: {e}"));
             }
             Err(e) => {
                 exit!(101, "ERROR: Could not read input file {input_file:?}: {e}");
@@ -112,29 +118,21 @@ fn main() -> Result<(), String> {
 }
 
 /// Run a command and return its stdout, stderr, and exit code
-fn pipe<T: AsRef<str>>(command: T) -> (String, String, Option<i32>) {
-    let (program, args) = split(command);
-    let child = std::process::Command::new(program)
-        .args(&args)
-        .output()
-        .unwrap();
-    let stdout = String::from_utf8(child.stdout).unwrap();
-    let stderr = String::from_utf8(child.stderr).unwrap();
-    let code = child.status.code();
+fn pipe<T: AsRef<std::ffi::OsStr> + std::fmt::Display>(
+    command: T,
+) -> (String, String, Option<i32>) {
+    let mut child = shell(command);
+    child.stdout(Stdio::piped());
+    child.stderr(Stdio::piped());
+    let output = child.execute_output().unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+    let stderr = String::from_utf8(output.stderr).unwrap();
+    let code = output.status.code();
     (stdout, stderr, code)
 }
 
-/// Split a command into program and arguments
-///
-/// * Resolve single and double-quoted arguments
-fn split<T: AsRef<str>>(command: T) -> (String, Vec<String>) {
-    let mut args = shlex::split(command.as_ref()).unwrap();
-    let program = args.remove(0);
-    (program, args)
-}
-
 /// Run a command and print its stderr and stdout
-fn run<T: AsRef<str>>(command: T) {
+fn run<T: AsRef<std::ffi::OsStr> + std::fmt::Display>(command: T) {
     let (stdout, stderr, _code) = pipe(command);
     print!("{stderr}{stdout}");
 }

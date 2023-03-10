@@ -32,17 +32,17 @@ Directive | Example | Description
 
 # Usage
 
-!inc:version/VERSION.md
-!inc:usage/USAGE.md
+!inc:VERSION.md
+!inc:USAGE.md
 # Example
 
 See the `readme` task in `Makefile.toml`:
 
-* Generates `t/version/VERSION.md` from `t/version/VERSION.template.md`
-    * `!run:./target/release/kapow -V`
-* Generates `t/usage/USAGE.md` from `t/usage/USAGE.template.md`
-    * `!run:./target/release/kapow -h`
-* Generates `README.md` from `t/README.template.md`
+* Generates `t/version/VERSION.md` from `t/version/VERSION.t.md`
+    * `!run:../target/release/kapow -V`
+* Generates `t/usage/USAGE.md` from `t/usage/USAGE.t.md`
+    * `!run:../target/release/kapow -h`
+* Generates `README.md` from `t/README.md`
     * `!inc:version/VERSION.md`
     * `!inc:usage/USAGE.md`
     * `` `\!now` `` (all variants)
@@ -60,10 +60,14 @@ See the `readme` task in `Makefile.toml`:
 * 2.1.0 (2023-02-24): Use `bat -pl md` as readme pager if have it installed; update dependencies
 * 2.1.1 (2023-02-24): Fix readme
 * 2.1.2 (2023-02-24): Fix readme
+* 2.2.0 (2023-03-10): Change to the directory of each input file in order to process included file
+  paths and commands to be run relative to the input file path;
+  run commands via the shell to enable more advanced commands and simplify usage;
+  update dependencies
 
 # Development
 
 ```bash
-cargo install bat cargo-edit cargo-make cargo-outdated dtg miniserve
+cargo install bat cargo-edit cargo-make cargo-outdated dtg kapow miniserve
 ```
 
