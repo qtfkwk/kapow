@@ -66,6 +66,7 @@ See the `readme` task in `Makefile.toml`:
   update dependencies
 * 2.2.1 (2023-03-10): Remove shlex dependency
 * 2.2.2 (2023-03-10): Fix readme; error if no input file(s) provided
+* 2.2.3 (2023-03-10): Fix confict with readme option
 
 # Development
 

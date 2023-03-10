@@ -20,7 +20,7 @@ macro_rules! exit {
 #[command(version, max_term_width = 80)]
 struct Cli {
     /// Print readme
-    #[arg(short, long)]
+    #[arg(short, long, conflicts_with = "input_files")]
     readme: bool,
 
     /// Input file(s)

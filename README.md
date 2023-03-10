@@ -17,15 +17,15 @@ Directive | Description
 
 Directive | Example | Description
 ---|---|---
-`` `!now` `` | 2023-03-10T17:45:20Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Fri 10 Mar 2023 12:45:20 EST | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Friday 12:45 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Fri 10 Mar 2023 10:45:20 MST | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Friday 10:45 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Fri 10 Mar 2023 07:45:20 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Friday 07:45 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Friday 17:45 | Current date/time in UTC and custom format
-`` `!now:x` `` | Xh29HjK | Current date/time in "x" format
+`` `!now` `` | 2023-03-10T17:50:15Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Fri 10 Mar 2023 12:50:15 EST | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Friday 12:50 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Fri 10 Mar 2023 10:50:15 MST | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Friday 10:50 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Fri 10 Mar 2023 07:50:15 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Friday 07:50 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Friday 17:50 | Current date/time in UTC and custom format
+`` `!now:x` `` | Xh29HoF | Current date/time in "x" format
 
 * Span directives must be placed inside a code span and may appear zero or more times in any line.
 * Disable processing a span directive by escaping `!` with a backslash: `\!`.
@@ -34,7 +34,7 @@ Directive | Example | Description
 
 ```text
 $ kapow -V
-kapow 2.2.2
+kapow 2.2.3
 ```
 
 ```text
@@ -84,6 +84,7 @@ See the `readme` task in `Makefile.toml`:
   update dependencies
 * 2.2.1 (2023-03-10): Remove shlex dependency
 * 2.2.2 (2023-03-10): Fix readme; error if no input file(s) provided
+* 2.2.3 (2023-03-10): Fix confict with readme option
 
 # Development
 
