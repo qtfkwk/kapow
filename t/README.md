@@ -64,6 +64,7 @@ See the `readme` task in `Makefile.toml`:
   paths and commands to be run relative to the input file path;
   run commands via the shell to enable more advanced commands and simplify usage;
   update dependencies
+* 2.2.1 (2023-03-10): Remove shlex dependency
 
 # Development
 

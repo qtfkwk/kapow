@@ -17,15 +17,15 @@ Directive | Description
 
 Directive | Example | Description
 ---|---|---
-`` `!now` `` | 2023-03-10T17:28:12Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Fri 10 Mar 2023 12:28:12 EST | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Friday 12:28 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Fri 10 Mar 2023 10:28:12 MST | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Friday 10:28 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Fri 10 Mar 2023 07:28:12 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Friday 07:28 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Friday 17:28 | Current date/time in UTC and custom format
-`` `!now:x` `` | Xh29HSC | Current date/time in "x" format
+`` `!now` `` | 2023-03-10T17:34:40Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Fri 10 Mar 2023 12:34:40 EST | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Friday 12:34 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Fri 10 Mar 2023 10:34:40 MST | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Friday 10:34 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Fri 10 Mar 2023 07:34:40 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Friday 07:34 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Friday 17:34 | Current date/time in UTC and custom format
+`` `!now:x` `` | Xh29HYe | Current date/time in "x" format
 
 * Span directives must be placed inside a code span and may appear zero or more times in any line.
 * Disable processing a span directive by escaping `!` with a backslash: `\!`.
@@ -34,7 +34,7 @@ Directive | Example | Description
 
 ```text
 $ kapow -V
-kapow 2.2.0
+kapow 2.2.1
 ```
 
 ```text
@@ -82,6 +82,7 @@ See the `readme` task in `Makefile.toml`:
   paths and commands to be run relative to the input file path;
   run commands via the shell to enable more advanced commands and simplify usage;
   update dependencies
+* 2.2.1 (2023-03-10): Remove shlex dependency
 
 # Development
 

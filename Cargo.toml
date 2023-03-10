@@ -1,6 +1,6 @@
 [package]
 name = "kapow"
-version = "2.2.0"
+version = "2.2.1"
 edition = "2021"
 authors = ["qtfkwk <qtfkwk@gmail.com>"]
 homepage = "https://github.com/qtfkwk/kapow"
@@ -14,4 +14,3 @@ execute = "0.2.11"
 lazy_static = "1.4.0"
 pager = "0.16.1"
 regex = "1.7.1"
-shlex = "1.1.0"
