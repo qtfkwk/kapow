@@ -65,10 +65,12 @@ See the `readme` task in `Makefile.toml`:
   run commands via the shell to enable more advanced commands and simplify usage;
   update dependencies
 * 2.2.1 (2023-03-10): Remove shlex dependency
+* 2.2.2 (2023-03-10): Fix readme; error if no input file(s) provided
 
 # Development
 
 ```bash
-cargo install bat cargo-edit cargo-make cargo-outdated dtg kapow miniserve
+cargo install bat cargo-edit cargo-make cargo-outdated dtg kapow \
+miniserve
 ```
 

@@ -24,6 +24,7 @@ struct Cli {
     readme: bool,
 
     /// Input file(s)
+    #[arg(required = true)]
     input_files: Vec<std::path::PathBuf>,
 }
 
