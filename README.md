@@ -17,15 +17,15 @@ Directive | Description
 
 Directive | Example | Description
 ---|---|---
-`` `!now` `` | 2023-03-11T14:29:19Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Sat 11 Mar 2023 09:29:19 EST | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Saturday 09:29 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Sat 11 Mar 2023 07:29:19 MST | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Saturday 07:29 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Sat 11 Mar 2023 04:29:19 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Saturday 04:29 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Saturday 14:29 | Current date/time in UTC and custom format
-`` `!now:x` `` | Xh2AETJ | Current date/time in "x" format
+`` `!now` `` | 2023-03-11T14:40:44Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Sat 11 Mar 2023 09:40:44 EST | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Saturday 09:40 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Sat 11 Mar 2023 07:40:44 MST | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Saturday 07:40 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Sat 11 Mar 2023 04:40:44 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Saturday 04:40 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Saturday 14:40 | Current date/time in UTC and custom format
+`` `!now:x` `` | Xh2AEei | Current date/time in "x" format
 `` `!today` `` | 2023-03-11 | Current date in UTC / RFC 3339
 `` `!today:local` `` | 2023-03-11 | Current date in local timezone
 `` `!today:MST7MDT` `` | 2023-03-11 | Current date in custom timezone
@@ -41,7 +41,7 @@ Directive | Example | Description
 
 ```text
 $ kapow -V
-kapow 2.3.0
+kapow 2.3.1
 ```
 
 ```text
@@ -104,8 +104,9 @@ See the `readme` task in `Makefile.toml`:
 * 2.2.2 (2023-03-10): Fix readme; error if no input file(s) provided
 * 2.2.3 (2023-03-10): Fix confict with readme option
 * 2.2.4 (2023-03-10): Fix readme
-* 2.2.5 (2023-03-11): Add `!today` span directive; improved exit macro; change directory function;
+* 2.3.0 (2023-03-11): Add `!today` span directive; improved exit macro; change directory function;
   where clauses; fix watch task; fix readme
+* 2.3.1 (2023-03-11): Fix readme
 
 # Development
 

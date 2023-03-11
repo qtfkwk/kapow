@@ -83,8 +83,9 @@ See the `readme` task in `Makefile.toml`:
 * 2.2.2 (2023-03-10): Fix readme; error if no input file(s) provided
 * 2.2.3 (2023-03-10): Fix confict with readme option
 * 2.2.4 (2023-03-10): Fix readme
-* 2.2.5 (2023-03-11): Add `\!today` span directive; improved exit macro; change directory function;
+* 2.3.0 (2023-03-11): Add `\!today` span directive; improved exit macro; change directory function;
   where clauses; fix watch task; fix readme
+* 2.3.1 (2023-03-11): Fix readme
 
 # Development
 
