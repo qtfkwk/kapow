@@ -86,7 +86,7 @@ ARGS="Cargo.toml Makefile.toml src t"
 run() { echo "\`\`\`\n\$ $@"; $@; e=$?; echo "\`\`\`\n"; return $e; }
 sum() { find ${ARGS} -type f |sort |xargs b3sum; }
 build() { run dtg -ax; run cargo make; }
-echo; sum >.watch1; build; while true; do inotifywait -qqr ${ARGS}; sum >.watch2;
+sum >.watch1; clear; build; while true; do inotifywait -qqr ${ARGS}; sum >.watch2;
 if ! diff .watch1 .watch2; then clear; build; fi; mv .watch2 .watch1; done
 '''
 

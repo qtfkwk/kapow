@@ -26,6 +26,13 @@ Directive | Example | Description
 `` `\!now:US/Hawaii:%A %H:%M` `` | `!now:US/Hawaii:%A %H:%M` | Current date/time in custom locale and format
 `` `\!now:UTC:%A %H:%M` `` | `!now:UTC:%A %H:%M` | Current date/time in UTC and custom format
 `` `\!now:x` `` | `!now:x` | Current date/time in "x" format
+`` `\!today` `` | `!today` | Current date in UTC / RFC 3339
+`` `\!today:local` `` | `!today:local` | Current date in local timezone
+`` `\!today:MST7MDT` `` | `!today:MST7MDT` | Current date in custom timezone
+`` `\!today:MST7MDT:%v` `` | `!today:MST7MDT:%v` | Current date in custom timezone and format
+`` `\!today:US/Hawaii` `` | `!today:US/Hawaii` | Current date in custom locale
+`` `\!today:US/Hawaii:%x` `` | `!today:US/Hawaii:%x` | Current date in custom locale and format
+`` `\!today:UTC:%A` `` | `!today:UTC:%A` | Current date in UTC and custom format
 
 * Span directives must be placed inside a code span and may appear zero or more times in any line.
 * Disable processing a span directive by escaping `!` with a backslash: `\!`.
@@ -34,6 +41,14 @@ Directive | Example | Description
 
 !inc:VERSION.md
 !inc:USAGE.md
+# Errors
+
+Code | Description
+---|---
+101 | Could not read input file
+102 | Could not read included file
+103 | Could not change directory
+
 # Example
 
 See the `readme` task in `Makefile.toml`:
@@ -68,6 +83,8 @@ See the `readme` task in `Makefile.toml`:
 * 2.2.2 (2023-03-10): Fix readme; error if no input file(s) provided
 * 2.2.3 (2023-03-10): Fix confict with readme option
 * 2.2.4 (2023-03-10): Fix readme
+* 2.2.5 (2023-03-11): Add `\!today` span directive; improved exit macro; change directory function;
+  where clauses; fix watch task; fix readme
 
 # Development
 

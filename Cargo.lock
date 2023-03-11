@@ -331,7 +331,7 @@ dependencies = [
 
 [[package]]
 name = "kapow"
-version = "2.2.4"
+version = "2.3.0"
 dependencies = [
  "clap",
  "dtg-lib",

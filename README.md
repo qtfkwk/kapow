@@ -17,15 +17,22 @@ Directive | Description
 
 Directive | Example | Description
 ---|---|---
-`` `!now` `` | 2023-03-10T20:52:21Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Fri 10 Mar 2023 15:52:21 EST | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Friday 15:52 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Fri 10 Mar 2023 13:52:21 MST | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Friday 13:52 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Fri 10 Mar 2023 10:52:21 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Friday 10:52 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Friday 20:52 | Current date/time in UTC and custom format
-`` `!now:x` `` | Xh29KqL | Current date/time in "x" format
+`` `!now` `` | 2023-03-11T14:29:19Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Sat 11 Mar 2023 09:29:19 EST | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Saturday 09:29 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Sat 11 Mar 2023 07:29:19 MST | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Saturday 07:29 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Sat 11 Mar 2023 04:29:19 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Saturday 04:29 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Saturday 14:29 | Current date/time in UTC and custom format
+`` `!now:x` `` | Xh2AETJ | Current date/time in "x" format
+`` `!today` `` | 2023-03-11 | Current date in UTC / RFC 3339
+`` `!today:local` `` | 2023-03-11 | Current date in local timezone
+`` `!today:MST7MDT` `` | 2023-03-11 | Current date in custom timezone
+`` `!today:MST7MDT:%v` `` | 11-Mar-2023 | Current date in custom timezone and format
+`` `!today:US/Hawaii` `` | 2023-03-11 | Current date in custom locale
+`` `!today:US/Hawaii:%x` `` | 03/11/23 | Current date in custom locale and format
+`` `!today:UTC:%A` `` | Saturday | Current date in UTC and custom format
 
 * Span directives must be placed inside a code span and may appear zero or more times in any line.
 * Disable processing a span directive by escaping `!` with a backslash: `\!`.
@@ -34,7 +41,7 @@ Directive | Example | Description
 
 ```text
 $ kapow -V
-kapow 2.2.4
+kapow 2.3.0
 ```
 
 ```text
@@ -51,6 +58,17 @@ Options:
   -h, --help     Print help
   -V, --version  Print version
 ```
+
+* The `-r` option uses [bat](https://crates.io/crates/bat) for paging and syntax highlighting if you
+  have it installed (optional).
+
+# Errors
+
+Code | Description
+---|---
+101 | Could not read input file
+102 | Could not read included file
+103 | Could not change directory
 
 # Example
 
@@ -86,6 +104,8 @@ See the `readme` task in `Makefile.toml`:
 * 2.2.2 (2023-03-10): Fix readme; error if no input file(s) provided
 * 2.2.3 (2023-03-10): Fix confict with readme option
 * 2.2.4 (2023-03-10): Fix readme
+* 2.2.5 (2023-03-11): Add `!today` span directive; improved exit macro; change directory function;
+  where clauses; fix watch task; fix readme
 
 # Development
 
