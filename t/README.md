@@ -86,6 +86,8 @@ See the `readme` task in `Makefile.toml`:
 * 2.3.0 (2023-03-11): Add `\!today` span directive; improved exit macro; change directory function;
   where clauses; fix watch task; fix readme
 * 2.3.1 (2023-03-11): Fix readme
+* 2.4.0 (2023-03-13): Enable processing from stdin if no input files provided or input file is `-`;
+  update dependencies
 
 # Development
 

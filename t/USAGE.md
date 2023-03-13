@@ -2,10 +2,10 @@
 $ kapow -h
 KAPOW!
 
-Usage: kapow [OPTIONS] <INPUT_FILES>...
+Usage: kapow [OPTIONS] [INPUT_FILES]...
 
 Arguments:
-  <INPUT_FILES>...  Input file(s)
+  [INPUT_FILES]...  Input file(s) [default: -]
 
 Options:
   -r, --readme   Print readme

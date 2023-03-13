@@ -29,7 +29,7 @@ struct Cli {
     readme: bool,
 
     /// Input file(s)
-    #[arg(required = true)]
+    #[arg(default_value = "-")]
     input_files: Vec<std::path::PathBuf>,
 }
 
@@ -61,80 +61,38 @@ fn main() -> Result<(), String> {
     let mut command_q = vec![];
     let original_dir = std::env::current_dir().expect("current directory");
     for input_file in &cli.input_files {
+        if input_file == std::path::Path::new("-") {
+            let stdin = std::io::stdin();
+            for line in stdin.lock().lines() {
+                process_line(
+                    line,
+                    &mut command_q,
+                    &d,
+                    &now,
+                    &now_local,
+                    &now_x,
+                    &today,
+                    &today_local,
+                );
+            }
+            continue;
+        }
         match std::fs::File::open(input_file) {
             Ok(f) => {
                 let f = std::io::BufReader::new(f);
                 let dir = input_file.parent().expect("input file parent");
                 cd(dir);
                 for line in f.lines() {
-                    let line = line.unwrap();
-                    if !command_q.is_empty() {
-                        // !run:command \
-                        // args
-                        if let Some(command) = line.strip_suffix('\\') {
-                            command_q.push(command.to_string());
-                        } else {
-                            command_q.push(line.to_string());
-                            run(command_q.drain(..).collect::<String>());
-                        }
-                    } else if let Some(command) = line.strip_prefix("!run:") {
-                        // !run:command
-                        if let Some(command) = command.strip_suffix('\\') {
-                            command_q.push(command.to_string());
-                        } else {
-                            run(command);
-                        }
-                    } else if let Some(path) = line.strip_prefix("!inc:") {
-                        // !inc:path
-                        match std::fs::File::open(path) {
-                            Ok(f) => {
-                                let f = std::io::BufReader::new(f);
-                                for line in f.lines() {
-                                    let line = line.unwrap();
-                                    println!("{line}");
-                                }
-                            }
-                            Err(e) => {
-                                exit!(102, "ERROR: Could not read included file {path:?}: {e}");
-                            }
-                        }
-                    } else if line.contains("`!now") {
-                        // !now
-                        let line = line
-                            .replace("`!now`", &now)
-                            .replace("`!now:local`", &now_local)
-                            .replace("`!now:x`", &now_x);
-                        let line = NOW.replace_all(&line, |c: &Captures| {
-                            if c[1].contains(':') {
-                                let (t, f) = c[1].split_once(':').unwrap();
-                                d.format(&Some(Format::custom(f)), &tz(t).ok())
-                            } else {
-                                d.default(&tz(&c[1]).ok())
-                            }
-                        });
-                        let line = line.replace("`\\!now", "`!now");
-                        println!("{line}");
-                    } else if line.contains("`!today") {
-                        // !today
-                        let line = line
-                            .replace("`!today`", &today)
-                            .replace("`!today:local`", &today_local);
-                        let line = TODAY.replace_all(&line, |c: &Captures| {
-                            if c[1].contains(':') {
-                                let (t, f) = c[1].split_once(':').unwrap();
-                                d.format(&Some(Format::custom(f)), &tz(t).ok())
-                            } else {
-                                d.format(&Some(Format::custom("%Y-%m-%d")), &tz(&c[1]).ok())
-                            }
-                        });
-                        let line = line.replace("`\\!today", "`!today");
-                        println!("{line}");
-                    } else {
-                        let line = line
-                            .replace("`\\!now", "`!now")
-                            .replace("`\\!today", "`!today");
-                        println!("{line}");
-                    }
+                    process_line(
+                        line,
+                        &mut command_q,
+                        &d,
+                        &now,
+                        &now_local,
+                        &now_x,
+                        &today,
+                        &today_local,
+                    );
                 }
                 cd(&original_dir);
             }
@@ -144,6 +102,87 @@ fn main() -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+#[allow(clippy::too_many_arguments)]
+fn process_line(
+    line: std::io::Result<String>,
+    command_q: &mut Vec<String>,
+    d: &Dtg,
+    now: &str,
+    now_local: &str,
+    now_x: &str,
+    today: &str,
+    today_local: &str,
+) {
+    let line = line.unwrap();
+    if !command_q.is_empty() {
+        // !run:command \
+        // args
+        if let Some(command) = line.strip_suffix('\\') {
+            command_q.push(command.to_string());
+        } else {
+            command_q.push(line.to_string());
+            run(command_q.drain(..).collect::<String>());
+        }
+    } else if let Some(command) = line.strip_prefix("!run:") {
+        // !run:command
+        if let Some(command) = command.strip_suffix('\\') {
+            command_q.push(command.to_string());
+        } else {
+            run(command);
+        }
+    } else if let Some(path) = line.strip_prefix("!inc:") {
+        // !inc:path
+        match std::fs::File::open(path) {
+            Ok(f) => {
+                let f = std::io::BufReader::new(f);
+                for line in f.lines() {
+                    let line = line.unwrap();
+                    println!("{line}");
+                }
+            }
+            Err(e) => {
+                exit!(102, "ERROR: Could not read included file {path:?}: {e}");
+            }
+        }
+    } else if line.contains("`!now") {
+        // !now
+        let line = line
+            .replace("`!now`", now)
+            .replace("`!now:local`", now_local)
+            .replace("`!now:x`", now_x);
+        let line = NOW.replace_all(&line, |c: &Captures| {
+            if c[1].contains(':') {
+                let (t, f) = c[1].split_once(':').unwrap();
+                d.format(&Some(Format::custom(f)), &tz(t).ok())
+            } else {
+                d.default(&tz(&c[1]).ok())
+            }
+        });
+        let line = line.replace("`\\!now", "`!now");
+        println!("{line}");
+    } else if line.contains("`!today") {
+        // !today
+        let line = line
+            .replace("`!today`", today)
+            .replace("`!today:local`", today_local);
+        let line = TODAY.replace_all(&line, |c: &Captures| {
+            if c[1].contains(':') {
+                let (t, f) = c[1].split_once(':').unwrap();
+                d.format(&Some(Format::custom(f)), &tz(t).ok())
+            } else {
+                d.format(&Some(Format::custom("%Y-%m-%d")), &tz(&c[1]).ok())
+            }
+        });
+        let line = line.replace("`\\!today", "`!today");
+        println!("{line}");
+    } else {
+        let line = line
+            .replace("`\\!now", "`!now")
+            .replace("`\\!today", "`!today");
+        println!("{line}");
+    }
 }
 
 /// Run a command and return its stdout, stderr, and exit code

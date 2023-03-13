@@ -68,7 +68,7 @@ alias = "my-test"
 
 [tasks.my-test]
 script = '''
-cargo test --release --color=always
+RUST_BACKTRACE=0 cargo test --release --color=always
 '''
 
 [tasks.test-verbose]
@@ -86,7 +86,8 @@ ARGS="Cargo.toml Makefile.toml src t"
 run() { echo "\`\`\`\n\$ $@"; $@; e=$?; echo "\`\`\`\n"; return $e; }
 sum() { find ${ARGS} -type f |sort |xargs b3sum; }
 build() { run dtg -ax; run cargo make; }
-sum >.watch1; clear; build; while true; do inotifywait -qqr ${ARGS}; sum >.watch2;
+clear; kapow t/README.md >README.md; sum >.watch1; build
+while true; do inotifywait -qqr ${ARGS}; sum >.watch2
 if ! diff .watch1 .watch2; then clear; build; fi; mv .watch2 .watch1; done
 '''
 
@@ -104,13 +105,16 @@ alias = "my-clean"
 [tasks.my-clean]
 script = '''
 cargo clean
+rm -f .watch1 .watch2
 '''
 
 [tasks.serve]
 script = '''
-#!/bin/sh
+#!/bin/bash
+set -xeo pipefail
 PORT=8080
-while ! miniserve -vp $PORT .; do PORT=$((PORT+1)); done
+e() { echo "Surf to: http://localhost:$PORT/"; }
+e; while ! miniserve -vp $PORT .; do PORT=$((PORT+1)); e; done
 '''
 
 [tasks.install]
