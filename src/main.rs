@@ -1,3 +1,4 @@
+use chrono::{DateTime, TimeZone, Utc};
 use clap::Parser;
 use dtg_lib::{tz, Dtg, Format};
 use execute::{shell, Execute};
@@ -6,6 +7,9 @@ use pager::Pager;
 use regex::{Captures, Regex};
 use std::io::BufRead;
 use std::process::Stdio;
+use unicode_segmentation::UnicodeSegmentation;
+
+const WRAP: usize = 66;
 
 /**
 Optionally print a message to stderr and exit with the given code
@@ -51,7 +55,8 @@ fn main() -> Result<(), String> {
         print!("{}", include_str!("../README.md"));
         exit!(0);
     }
-    let d = Dtg::now();
+    let start = Utc::now();
+    let d = Dtg::from_dt(&Utc.timestamp_opt(start.timestamp(), 0).unwrap());
     let now = d.rfc_3339();
     let now_x = d.x_format();
     let local_tz = tz("local").unwrap();
@@ -64,9 +69,11 @@ fn main() -> Result<(), String> {
         if input_file == std::path::Path::new("-") {
             let stdin = std::io::stdin();
             for line in stdin.lock().lines() {
+                let line = line.unwrap();
                 process_line(
-                    line,
+                    &line,
                     &mut command_q,
+                    &start,
                     &d,
                     &now,
                     &now_local,
@@ -82,10 +89,15 @@ fn main() -> Result<(), String> {
                 let f = std::io::BufReader::new(f);
                 let dir = input_file.parent().expect("input file parent");
                 cd(dir);
-                for line in f.lines() {
+                for (i, line) in f.lines().enumerate() {
+                    let line = line.unwrap();
+                    if i == 0 && line.starts_with("#!") {
+                        continue;
+                    }
                     process_line(
-                        line,
+                        &line,
                         &mut command_q,
+                        &start,
                         &d,
                         &now,
                         &now_local,
@@ -106,8 +118,9 @@ fn main() -> Result<(), String> {
 
 #[allow(clippy::too_many_arguments)]
 fn process_line(
-    line: std::io::Result<String>,
+    line: &str,
     command_q: &mut Vec<String>,
+    start: &DateTime<Utc>,
     d: &Dtg,
     now: &str,
     now_local: &str,
@@ -115,73 +128,85 @@ fn process_line(
     today: &str,
     today_local: &str,
 ) {
-    let line = line.unwrap();
-    if !command_q.is_empty() {
-        // !run:command \
-        // args
-        if let Some(command) = line.strip_suffix('\\') {
-            command_q.push(command.to_string());
-        } else {
-            command_q.push(line.to_string());
-            run(command_q.drain(..).collect::<String>());
-        }
-    } else if let Some(command) = line.strip_prefix("!run:") {
-        // !run:command
-        if let Some(command) = command.strip_suffix('\\') {
-            command_q.push(command.to_string());
-        } else {
-            run(command);
-        }
-    } else if let Some(path) = line.strip_prefix("!inc:") {
-        // !inc:path
-        match std::fs::File::open(path) {
-            Ok(f) => {
-                let f = std::io::BufReader::new(f);
-                for line in f.lines() {
-                    let line = line.unwrap();
-                    println!("{line}");
+    let mut line = line.to_string();
+    loop {
+        // Block directives...
+        if !command_q.is_empty() {
+            // !run:command \
+            // args
+            if let Some(command) = line.strip_suffix('\\') {
+                command_q.push(command.to_string());
+            } else {
+                command_q.push(line.to_string());
+                run(command_q.drain(..).collect::<String>());
+            }
+            break;
+        } else if let Some(command) = line.strip_prefix("!run:") {
+            // !run:command
+            if let Some(command) = command.strip_suffix('\\') {
+                command_q.push(command.to_string());
+            } else {
+                run(command);
+            }
+            break;
+        } else if let Some(path) = line.strip_prefix("!inc:") {
+            // !inc:path
+            match std::fs::File::open(path) {
+                Ok(f) => {
+                    let f = std::io::BufReader::new(f);
+                    for i in f.lines() {
+                        println!("{}", i.unwrap());
+                    }
+                }
+                Err(e) => {
+                    exit!(102, "ERROR: Could not read included file {path:?}: {e}");
                 }
             }
-            Err(e) => {
-                exit!(102, "ERROR: Could not read included file {path:?}: {e}");
-            }
+            break;
+        // Span directives...
+        } else if line.contains("`!elapsed") {
+            // !elapsed
+            line = line.replace("`!elapsed`", &human_duration(Utc::now() - *start));
+        } else if line.contains("`!now") {
+            // !now
+            line = line
+                .replace("`!now`", now)
+                .replace("`!now:local`", now_local)
+                .replace("`!now:x`", now_x);
+            line = NOW
+                .replace_all(&line, |c: &Captures| {
+                    if c[1].contains(':') {
+                        let (t, f) = c[1].split_once(':').unwrap();
+                        d.format(&Some(Format::custom(f)), &tz(t).ok())
+                    } else {
+                        d.default(&tz(&c[1]).ok())
+                    }
+                })
+                .to_string();
+        } else if line.contains("`!today") {
+            // !today
+            line = line
+                .replace("`!today`", today)
+                .replace("`!today:local`", today_local);
+            line = TODAY
+                .replace_all(&line, |c: &Captures| {
+                    if c[1].contains(':') {
+                        let (t, f) = c[1].split_once(':').unwrap();
+                        d.format(&Some(Format::custom(f)), &tz(t).ok())
+                    } else {
+                        d.format(&Some(Format::custom("%Y-%m-%d")), &tz(&c[1]).ok())
+                    }
+                })
+                .to_string();
+        // Done...
+        } else {
+            line = line
+                .replace("`\\!elapsed", "`!elapsed")
+                .replace("`\\!now", "`!now")
+                .replace("`\\!today", "`!today");
+            println!("{line}");
+            break;
         }
-    } else if line.contains("`!now") {
-        // !now
-        let line = line
-            .replace("`!now`", now)
-            .replace("`!now:local`", now_local)
-            .replace("`!now:x`", now_x);
-        let line = NOW.replace_all(&line, |c: &Captures| {
-            if c[1].contains(':') {
-                let (t, f) = c[1].split_once(':').unwrap();
-                d.format(&Some(Format::custom(f)), &tz(t).ok())
-            } else {
-                d.default(&tz(&c[1]).ok())
-            }
-        });
-        let line = line.replace("`\\!now", "`!now");
-        println!("{line}");
-    } else if line.contains("`!today") {
-        // !today
-        let line = line
-            .replace("`!today`", today)
-            .replace("`!today:local`", today_local);
-        let line = TODAY.replace_all(&line, |c: &Captures| {
-            if c[1].contains(':') {
-                let (t, f) = c[1].split_once(':').unwrap();
-                d.format(&Some(Format::custom(f)), &tz(t).ok())
-            } else {
-                d.format(&Some(Format::custom("%Y-%m-%d")), &tz(&c[1]).ok())
-            }
-        });
-        let line = line.replace("`\\!today", "`!today");
-        println!("{line}");
-    } else {
-        let line = line
-            .replace("`\\!now", "`!now")
-            .replace("`\\!today", "`!today");
-        println!("{line}");
     }
 }
 
@@ -208,6 +233,8 @@ where
     T: AsRef<std::ffi::OsStr> + std::fmt::Display,
 {
     let (stdout, stderr, _code) = pipe(command);
+    let stderr = term_hard_wrap(&stderr, WRAP);
+    let stdout = term_hard_wrap(&stdout, WRAP);
     print!("{stderr}{stdout}");
 }
 
@@ -217,4 +244,60 @@ Change directory
 fn cd(dir: &std::path::Path) {
     std::env::set_current_dir(dir)
         .unwrap_or_else(|e| exit!(103, "ERROR: Could not change directory to {dir:?}: {e}"));
+}
+
+/**
+Wrap text with ANSI color codes to a fixed number of columns
+*/
+fn term_hard_wrap(s: &str, width: usize) -> String {
+    fn len(s: &str) -> usize {
+        std::str::from_utf8(&strip_ansi_escapes::strip(s.as_bytes()).unwrap())
+            .unwrap()
+            .grapheme_indices(true)
+            .map(|(_offset, grapheme)| if grapheme == "\t" { 8 } else { 1 })
+            .sum()
+    }
+    let w = width - 1;
+    let mut r = vec![];
+    for line in s.lines() {
+        if len(line) <= width {
+            r.push(format!("{line}\n"));
+            continue;
+        }
+        let mut line = line;
+        while len(line) > w {
+            let mut i = w;
+            let mut t = &line[..i];
+            while len(t) < w {
+                i += 1;
+                t = &line[..i];
+            }
+            r.push(format!("{t}\\\n"));
+            line = &line[i..];
+        }
+        r.push(format!("{line}\n"));
+    }
+    r.join("")
+}
+
+fn human_duration(duration: chrono::Duration) -> String {
+    fn f(n: i64, abbr: &str) -> Option<String> {
+        if n != 0 {
+            Some(format!("{n}{abbr}"))
+        } else if abbr == "s" {
+            Some(String::from("0s"))
+        } else {
+            None
+        }
+    }
+    [
+        (duration.num_days(), "d"),
+        (duration.num_hours(), "h"),
+        (duration.num_minutes(), "m"),
+        (duration.num_seconds(), "s"),
+    ]
+    .iter()
+    .filter_map(|x| f(x.0, x.1))
+    .collect::<Vec<String>>()
+    .join("")
 }

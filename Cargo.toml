@@ -1,6 +1,6 @@
 [package]
 name = "kapow"
-version = "2.4.0"
+version = "2.5.0"
 edition = "2021"
 authors = ["qtfkwk <qtfkwk@gmail.com>"]
 homepage = "https://github.com/qtfkwk/kapow"
@@ -8,9 +8,12 @@ description = "Template processor"
 license = "MIT"
 
 [dependencies]
-clap = { version = "4.1.8", features = ["derive", "wrap_help"] }
+chrono = { version = "0.4.24", default-features = false, features = ["clock"] }
+clap = { version = "4.2.5", features = ["derive", "wrap_help"] }
 dtg-lib = "5.0.0"
-execute = "0.2.11"
+execute = "0.2.12"
 lazy_static = "1.4.0"
 pager = "0.16.1"
-regex = "1.7.1"
+regex = "1.8.1"
+strip-ansi-escapes = "0.1.1"
+unicode-segmentation = "1.10.1"
