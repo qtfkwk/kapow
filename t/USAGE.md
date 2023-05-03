@@ -2,10 +2,10 @@
 $ kapow -h
 KAPOW!
 
-Usage: kapow [OPTIONS] [INPUT_FILES]...
+Usage: kapow [OPTIONS] [PATH]...
 
 Arguments:
-  [INPUT_FILES]...  Input file(s) [default: -]
+  [PATH]...  Source file(s) [default: -]
 
 Options:
   -p             Page output

@@ -45,15 +45,15 @@ Notes:
 Directive | Example | Description
 ---|---|---
 `` `!elapsed` `` | 0s | Processing time
-`` `!now` `` | 2023-05-03T12:45:48Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Wed 03 May 2023 08:45:48 EDT | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Wednesday 08:45 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Wed 03 May 2023 06:45:48 MDT | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Wednesday 06:45 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Wed 03 May 2023 02:45:48 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Wednesday 02:45 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Wednesday 12:45 | Current date/time in UTC and custom format
-`` `!now:x` `` | Xh42Cjm | Current date/time in "x" format
+`` `!now` `` | 2023-05-03T14:29:19Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Wed 03 May 2023 10:29:19 EDT | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Wednesday 10:29 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Wed 03 May 2023 08:29:19 MDT | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Wednesday 08:29 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Wed 03 May 2023 04:29:19 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Wednesday 04:29 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Wednesday 14:29 | Current date/time in UTC and custom format
+`` `!now:x` `` | Xh42ETJ | Current date/time in "x" format
 `` `!today` `` | 2023-05-03 | Current date in UTC / RFC 3339
 `` `!today:local` `` | 2023-05-03 | Current date in local timezone
 `` `!today:MST7MDT` `` | 2023-05-03 | Current date in custom timezone
@@ -81,17 +81,17 @@ NOTE: If [`bat`] is installed, Kapow uses it for syntax highlighting and paging
 
 ```text
 $ kapow -V
-kapow 2.6.0
+kapow 2.6.1
 ```
 
 ```text
 $ kapow -h
 KAPOW!
 
-Usage: kapow [OPTIONS] [INPUT_FILES]...
+Usage: kapow [OPTIONS] [PATH]...
 
 Arguments:
-  [INPUT_FILES]...  Input file(s) [default: -]
+  [PATH]...  Source file(s) [default: -]
 
 Options:
   -p             Page output

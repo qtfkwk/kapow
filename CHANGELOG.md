@@ -25,12 +25,13 @@
 * 2.3.1 (2023-03-11): Fix readme
 * 2.4.0 (2023-03-13): Enable processing from stdin if no input files provided or
   input file is `-`; update dependencies
-* 2.5.0 (2023-05-02): Ignore shebash line; fold command output with ANSI color
+* 2.5.0 (2023-05-02): Ignore shebang line; fold command output with ANSI color
   codes to 66 columns; add `\!elapsed` directive; fix issue when more than 1
   different span directives are on a line; improve readme; update dependencies
 * 2.6.0 (2023-05-03): Improved [`bat`] integration and added `-p`, `-P`, `-H`,
   `-l` options; improve readme; [`CHANGELOG.md`]; eliminate `execute`
   dependency; update dependencies
+* 2.6.1 (2023-05-03): Fix changelog, help
 
 [`CHANGELOG.md`]: CHANGELOG.md
 [`bat`]: https://crates.io/crates/bat

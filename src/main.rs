@@ -46,8 +46,8 @@ struct Cli {
     #[arg(short, long, conflicts_with = "input_files")]
     readme: bool,
 
-    /// Input file(s)
-    #[arg(default_value = "-")]
+    /// Source file(s)
+    #[arg(value_name = "PATH", default_value = "-")]
     input_files: Vec<std::path::PathBuf>,
 }
 
