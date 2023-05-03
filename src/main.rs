@@ -1,12 +1,10 @@
 use chrono::{DateTime, TimeZone, Utc};
 use clap::Parser;
 use dtg_lib::{tz, Dtg, Format};
-use execute::{shell, Execute};
 use lazy_static::lazy_static;
 use pager::Pager;
 use regex::{Captures, Regex};
 use std::io::BufRead;
-use std::process::Stdio;
 use unicode_segmentation::UnicodeSegmentation;
 
 const WRAP: usize = 66;
@@ -28,6 +26,22 @@ macro_rules! exit {
 #[derive(Parser)]
 #[command(version, max_term_width = 80)]
 struct Cli {
+    /// Page output
+    #[arg(short, conflicts_with = "no_page")]
+    page: bool,
+
+    /// Do not page output
+    #[arg(short = 'P', conflicts_with = "page")]
+    no_page: bool,
+
+    /// Disable syntax highlighting
+    #[arg(short = 'H', conflicts_with = "lang")]
+    no_lang: bool,
+
+    /// Syntax higlight language
+    #[arg(short, conflicts_with = "no_lang", default_value = "md")]
+    lang: String,
+
     /// Print readme
     #[arg(short, long, conflicts_with = "input_files")]
     readme: bool,
@@ -51,10 +65,11 @@ Main function
 fn main() -> Result<(), String> {
     let cli = Cli::parse();
     if cli.readme {
-        Pager::with_pager("bat -pl md").setup();
+        page(true, cli.no_page, cli.no_lang, &cli.lang);
         print!("{}", include_str!("../README.md"));
         exit!(0);
     }
+    page(false, cli.page, cli.no_lang, &cli.lang);
     let start = Utc::now();
     let d = Dtg::from_dt(&Utc.timestamp_opt(start.timestamp(), 0).unwrap());
     let now = d.rfc_3339();
@@ -210,28 +225,24 @@ fn process_line(
     }
 }
 
-/// Run a command and return its stdout, stderr, and exit code
-fn pipe<T>(command: T) -> (String, String, Option<i32>)
-where
-    T: AsRef<std::ffi::OsStr> + std::fmt::Display,
-{
-    let mut child = shell(command);
-    child.stdout(Stdio::piped());
-    child.stderr(Stdio::piped());
-    let output = child.execute_output().unwrap();
-    let stdout = String::from_utf8(output.stdout).unwrap();
-    let stderr = String::from_utf8(output.stderr).unwrap();
-    let code = output.status.code();
+/**
+Run a command and return its stdout, stderr, and exit code
+*/
+fn pipe<T: AsRef<str>>(command: T) -> (String, String, Option<i32>) {
+    let child = std::process::Command::new("sh")
+        .args(["-c", command.as_ref()])
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8(child.stdout).unwrap();
+    let stderr = String::from_utf8(child.stderr).unwrap();
+    let code = child.status.code();
     (stdout, stderr, code)
 }
 
 /**
 Run a command and print its stderr and stdout
 */
-fn run<T>(command: T)
-where
-    T: AsRef<std::ffi::OsStr> + std::fmt::Display,
-{
+fn run<T: AsRef<str>>(command: T) {
     let (stdout, stderr, _code) = pipe(command);
     let stderr = term_hard_wrap(&stderr, WRAP);
     let stdout = term_hard_wrap(&stdout, WRAP);
@@ -280,6 +291,9 @@ fn term_hard_wrap(s: &str, width: usize) -> String {
     r.join("")
 }
 
+/**
+Convert a Duration into a short human-readable string like `[Dd][Hh][Mm][Ss]`
+*/
 fn human_duration(duration: chrono::Duration) -> String {
     fn f(n: i64, abbr: &str) -> Option<String> {
         if n != 0 {
@@ -300,4 +314,19 @@ fn human_duration(duration: chrono::Duration) -> String {
     .filter_map(|x| f(x.0, x.1))
     .collect::<Vec<String>>()
     .join("")
+}
+
+/**
+Configure and set up the pager
+*/
+fn page(readme: bool, no_page: bool, no_lang: bool, lang: &str) {
+    let mut pager = String::from("bat -p");
+    if readme == no_page {
+        pager.push('P');
+    }
+    if !(lang.is_empty() || no_lang) {
+        pager.push_str("l ");
+        pager.push_str(lang);
+    }
+    Pager::with_pager(&pager).setup();
 }

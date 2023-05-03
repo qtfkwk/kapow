@@ -8,6 +8,10 @@ Arguments:
   [INPUT_FILES]...  Input file(s) [default: -]
 
 Options:
+  -p             Page output
+  -P             Do not page output
+  -H             Disable syntax highlighting
+  -l <LANG>      Syntax higlight language [default: md]
   -r, --readme   Print readme
   -h, --help     Print help
   -V, --version  Print version

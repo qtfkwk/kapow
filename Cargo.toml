@@ -1,6 +1,6 @@
 [package]
 name = "kapow"
-version = "2.5.0"
+version = "2.6.0"
 edition = "2021"
 authors = ["qtfkwk <qtfkwk@gmail.com>"]
 homepage = "https://github.com/qtfkwk/kapow"
@@ -9,9 +9,8 @@ license = "MIT"
 
 [dependencies]
 chrono = { version = "0.4.24", default-features = false, features = ["clock"] }
-clap = { version = "4.2.5", features = ["derive", "wrap_help"] }
+clap = { version = "4.2.7", features = ["derive", "wrap_help"] }
 dtg-lib = "5.0.0"
-execute = "0.2.12"
 lazy_static = "1.4.0"
 pager = "0.16.1"
 regex = "1.8.1"

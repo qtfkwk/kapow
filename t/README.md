@@ -1,25 +1,22 @@
 # About
 
 Kapow is a template processor that provides the following directives to support
-injecting file contents, command output, current date/time, etc in generated
-files.
+injecting file contents, command output, current date/time, elapsed time, etc in
+generated output.
 
-It can be used in a few different ways:
+It can be used in some different ways:
 
 * Standard: Create a (Markdown) file with Kapow directives then run
-  `kapow path/to/file.ext`.
+  `kapow path/to/file.ext`; optionally save the output via redirection:
+  `kapow path/to/file.ext >output.ext`
 * Shebang: Place `#!/usr/bin/env kapow` as the first line of a (Markdown) file,
-  make it "executable" via `chmod +x path/to/file.ext`, then run via
-  `cd path/to; ./file.ext` (see also note #3 under [block directives]).
+  make it "executable" via `chmod +x file.ext`, then run via `./file.ext` (see
+  note #3 under [block directives]).
 
-Kapow is generally designed around the idea of using Markdown output formatting,
-but the format could be any text format that supports the desired syntax.
-
-NOTE: Installing [`bat`] and piping `kapow` output to `bat -pl md` adds nice
-syntax highlighting to Markdown and paging (or add `-P` to disable the pager).
+Kapow is designed around Markdown syntax, but can be used with any text format
+that works with its directives.
 
 [block directives]: #block-directives
-[`bat`]: https://crates.io/crates/bat
 
 ## Block directives
 
@@ -32,10 +29,16 @@ Notes:
 
 1. Block directives must be placed at the beginning of a line.
 2. Long commands can be backslash-wrapped.
-3. Keep in mind that file paths and commands are processed from the directory
-   where the source file is located.
-   That is unless the source file is stdin (including shebang usage), so
-   changing to the directory where the source file is located is a good idea.
+3. Included file paths and commands are processed from the directory where the
+   source file is located when it is passed as an argument.
+   However, if the source file is read on stdin or run via shebang, included
+   file paths and commands are processed relative to the current directory.
+   So, if any included files use relative paths or commands that depend on the
+   current directory, it will be necessary to manually change to the source
+   file's directory and then run via `./file.ext`.
+4. Block directives are entirely replaced by their contents/output, so you are
+   free to embed them inside of or as Markdown syntax... for example, as
+   listing contents, prepend a prompt showing the command, etc.
 
 ## Span directives
 
@@ -63,6 +66,17 @@ Directive | Example | Description
   times in any line.
 * Disable processing a span directive by escaping `!` with a backslash: `\!`.
 
+# Install
+
+```bash
+cargo install kapow bat
+```
+
+NOTE: If [`bat`] is installed, Kapow uses it for syntax highlighting and paging
+(see the `-p`, `-P`, `-H`, `-l` options).
+
+[`bat`]: https://crates.io/crates/bat
+
 # Usage
 
 !inc:VERSION.md
@@ -88,41 +102,10 @@ See the `readme` task in `Makefile.toml`:
     * `!inc:USAGE.md`
     * `` `\!now` `` (all variants)
 
-# Changelog
-
-* 1.0.0 (2023-02-21): Initial release
-* 1.0.1 (2023-02-21): Update dependencies
-* 2.0.0 (2023-02-22): Include stderr in `!run:` output;
-  enable backslash-wrapping long commands;
-  include whitespace in included files;
-  process path of included files relative to the containing file instead of the
-  current directory; input and included file processed more efficiently via
-  `BufReader` instead of `read_to_string`; improved error handling
-* 2.1.0 (2023-02-24): Use `bat -pl md` as readme pager if have it installed;
-  update dependencies
-* 2.1.1 (2023-02-24): Fix readme
-* 2.1.2 (2023-02-24): Fix readme
-* 2.2.0 (2023-03-10): Change to the directory of each input file in order to
-  process included file paths and commands to be run relative to the input file
-  path; run commands via the shell to enable more advanced commands and simplify
-  usage; update dependencies
-* 2.2.1 (2023-03-10): Remove shlex dependency
-* 2.2.2 (2023-03-10): Fix readme; error if no input file(s) provided
-* 2.2.3 (2023-03-10): Fix confict with readme option
-* 2.2.4 (2023-03-10): Fix readme
-* 2.3.0 (2023-03-11): Add `\!today` span directive; improved exit macro; change
-  directory function; where clauses; fix watch task; fix readme
-* 2.3.1 (2023-03-11): Fix readme
-* 2.4.0 (2023-03-13): Enable processing from stdin if no input files provided or
-  input file is `-`; update dependencies
-* 2.5.0 (2023-05-02): Ignore shebash line; fold command output with ANSI color
-  codes to 66 columns; add `\!elapsed` directive; fix issue when more than 1
-  different span directives are on a line; improve readme; update dependencies
-
 # Development
 
 ```bash
-cargo install bat cargo-edit cargo-make cargo-outdated dtg kapow \
+cargo install cargo-edit cargo-make cargo-outdated dtg kapow \
 miniserve
 ```
 
