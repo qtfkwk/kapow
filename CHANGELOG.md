@@ -32,6 +32,9 @@
   `-l` options; improve readme; [`CHANGELOG.md`]; eliminate `execute`
   dependency; update dependencies
 * 2.6.1 (2023-05-03): Fix changelog, help
+* 2.6.2 (2023-05-04): Fix bug: `ERROR: Could not change directory to "": No such
+  file or directory (os error 2)` when running `kapow file.ext`; update
+  dependencies
 
 [`CHANGELOG.md`]: CHANGELOG.md
 [`bat`]: https://crates.io/crates/bat

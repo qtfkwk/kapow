@@ -253,8 +253,10 @@ fn run<T: AsRef<str>>(command: T) {
 Change directory
 */
 fn cd(dir: &std::path::Path) {
-    std::env::set_current_dir(dir)
-        .unwrap_or_else(|e| exit!(103, "ERROR: Could not change directory to {dir:?}: {e}"));
+    if !["", "."].iter().any(|x| std::path::Path::new(x) == dir) {
+        std::env::set_current_dir(dir)
+            .unwrap_or_else(|e| exit!(103, "ERROR: Could not change directory to {dir:?}: {e}"));
+    }
 }
 
 /**

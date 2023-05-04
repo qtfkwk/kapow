@@ -1,6 +1,6 @@
 [package]
 name = "kapow"
-version = "2.6.1"
+version = "2.6.2"
 edition = "2021"
 authors = ["qtfkwk <qtfkwk@gmail.com>"]
 homepage = "https://github.com/qtfkwk/kapow"
