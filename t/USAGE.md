@@ -12,6 +12,7 @@ Options:
   -P             Do not page output
   -H             Disable syntax highlighting
   -l <LANG>      Syntax higlight language [default: md]
+  -k             Ignore !run directive failures
   -r, --readme   Print readme
   -h, --help     Print help
   -V, --version  Print version

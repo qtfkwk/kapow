@@ -42,6 +42,10 @@ struct Cli {
     #[arg(short, conflicts_with = "no_lang", default_value = "md")]
     lang: String,
 
+    /// Ignore !run directive failures
+    #[arg(short = 'k')]
+    ignore_run_fail: bool,
+
     /// Print readme
     #[arg(short, long, conflicts_with = "input_files")]
     readme: bool,
@@ -57,12 +61,14 @@ lazy_static! {
 
     /// Regular expression for `!today` directive
     static ref TODAY: Regex = Regex::new(r"`!today:([^`]*)`").unwrap();
+
+    static ref FENCE_RE: Regex = Regex::new(r"^(\s*(```+|~~~+))").unwrap();
 }
 
 /**
 Main function
 */
-fn main() -> Result<(), String> {
+fn main() {
     let cli = Cli::parse();
     if cli.readme {
         page(true, cli.no_page, cli.no_lang, &cli.lang);
@@ -78,6 +84,7 @@ fn main() -> Result<(), String> {
     let now_local = d.default(&Some(local_tz));
     let today = d.format(&Some(Format::custom("%Y-%m-%d")), &None);
     let today_local = d.format(&Some(Format::custom("%Y-%m-%d")), &Some(local_tz));
+    let mut fence = None;
     let mut command_q = vec![];
     let original_dir = std::env::current_dir().expect("current directory");
     for input_file in &cli.input_files {
@@ -85,6 +92,7 @@ fn main() -> Result<(), String> {
             let stdin = std::io::stdin();
             for line in stdin.lock().lines() {
                 let line = line.unwrap();
+                fence = update_fence(&line, fence);
                 process_line(
                     &line,
                     &mut command_q,
@@ -95,6 +103,8 @@ fn main() -> Result<(), String> {
                     &now_x,
                     &today,
                     &today_local,
+                    &fence,
+                    cli.ignore_run_fail,
                 );
             }
             continue;
@@ -109,6 +119,7 @@ fn main() -> Result<(), String> {
                     if i == 0 && line.starts_with("#!") {
                         continue;
                     }
+                    fence = update_fence(&line, fence);
                     process_line(
                         &line,
                         &mut command_q,
@@ -119,6 +130,8 @@ fn main() -> Result<(), String> {
                         &now_x,
                         &today,
                         &today_local,
+                        &fence,
+                        cli.ignore_run_fail,
                     );
                 }
                 cd(&original_dir);
@@ -128,7 +141,19 @@ fn main() -> Result<(), String> {
             }
         }
     }
-    Ok(())
+}
+
+fn update_fence(line: &str, fence: Option<String>) -> Option<String> {
+    if let Some(m) = FENCE_RE.find(line) {
+        if let Some(s) = &fence {
+            if m.as_str() == s {
+                return None;
+            }
+        } else {
+            return Some(m.as_str().to_owned());
+        }
+    }
+    fence
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -142,6 +167,8 @@ fn process_line(
     now_x: &str,
     today: &str,
     today_local: &str,
+    fence: &Option<String>,
+    ignore_run_fail: bool,
 ) {
     let mut line = line.to_string();
     loop {
@@ -153,7 +180,7 @@ fn process_line(
                 command_q.push(command.to_string());
             } else {
                 command_q.push(line.to_string());
-                run(command_q.drain(..).collect::<String>());
+                run(command_q.drain(..).collect::<String>(), fence, ignore_run_fail);
             }
             break;
         } else if let Some(command) = line.strip_prefix("!run:") {
@@ -161,7 +188,7 @@ fn process_line(
             if let Some(command) = command.strip_suffix('\\') {
                 command_q.push(command.to_string());
             } else {
-                run(command);
+                run(command, fence, ignore_run_fail);
             }
             break;
         } else if let Some(path) = line.strip_prefix("!inc:") {
@@ -242,11 +269,19 @@ fn pipe<T: AsRef<str>>(command: T) -> (String, String, Option<i32>) {
 /**
 Run a command and print its stderr and stdout
 */
-fn run<T: AsRef<str>>(command: T) {
-    let (stdout, stderr, _code) = pipe(command);
+fn run<T: AsRef<str>>(command: T, fence: &Option<String>, ignore_run_fail: bool) {
+    let command = command.as_ref();
+    let (stdout, stderr, code) = pipe(command);
     let stderr = term_hard_wrap(&stderr, WRAP);
     let stdout = term_hard_wrap(&stdout, WRAP);
     print!("{stderr}{stdout}");
+    if !ignore_run_fail && code != Some(0) {
+        if let Some(s) = fence {
+            println!("{s}");
+        }
+        println!("\n---\n\nERROR: Command `{command}` exited with error code `{code:?}`\n");
+        exit!(104);
+    }
 }
 
 /**

@@ -88,6 +88,11 @@ Code | Description
 101 | Could not read input file
 102 | Could not read included file
 103 | Could not change directory
+104 | Run directive command failed
+
+NOTE: The kapow process may not *appear* to have exited with these error codes
+in "normal usage" because output is piped to [`bat`] as a pager if it is
+installed and output is a TTY and unfortunately [`bat`] masks the error code.
 
 # Example
 

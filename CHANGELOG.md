@@ -35,6 +35,9 @@
 * 2.6.2 (2023-05-04): Fix bug: `ERROR: Could not change directory to "": No such
   file or directory (os error 2)` when running `kapow file.ext`; update
   dependencies
+* 2.7.0 (2023-05-05): Add new default behaviour to exit with an error if a
+  `!run` directive fails and `-k` to *keep going* instead; update the Errors
+  section of the readme
 
 [`CHANGELOG.md`]: CHANGELOG.md
 [`bat`]: https://crates.io/crates/bat

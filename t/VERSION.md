@@ -1,5 +1,5 @@
 ```text
 $ kapow -V
-kapow 2.6.2
+kapow 2.7.0
 ```
 
