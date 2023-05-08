@@ -180,7 +180,11 @@ fn process_line(
                 command_q.push(command.to_string());
             } else {
                 command_q.push(line.to_string());
-                run(command_q.drain(..).collect::<String>(), fence, ignore_run_fail);
+                run(
+                    command_q.drain(..).collect::<String>(),
+                    fence,
+                    ignore_run_fail,
+                );
             }
             break;
         } else if let Some(command) = line.strip_prefix("!run:") {
@@ -301,8 +305,8 @@ fn term_hard_wrap(s: &str, width: usize) -> String {
     fn len(s: &str) -> usize {
         std::str::from_utf8(&strip_ansi_escapes::strip(s.as_bytes()).unwrap())
             .unwrap()
-            .grapheme_indices(true)
-            .map(|(_offset, grapheme)| if grapheme == "\t" { 8 } else { 1 })
+            .graphemes(true)
+            .map(|grapheme| if grapheme == "\t" { 8 } else { 1 })
             .sum()
     }
     let w = width - 1;
@@ -310,20 +314,27 @@ fn term_hard_wrap(s: &str, width: usize) -> String {
     for line in s.lines() {
         if len(line) <= width {
             r.push(format!("{line}\n"));
-            continue;
-        }
-        let mut line = line;
-        while len(line) > w {
-            let mut i = w;
-            let mut t = &line[..i];
-            while len(t) < w {
-                i += 1;
-                t = &line[..i];
+        } else {
+            let mut gs = line.graphemes(true).collect::<Vec<_>>();
+            let mut t = gs.drain(..width).collect::<String>();
+            while !gs.is_empty() {
+                let g = gs.remove(0);
+                t.push_str(g);
+                if len(&t) >= w {
+                    r.push(format!("{t}\\\n"));
+                    let max = {
+                        let l = gs.len();
+                        if l > width {
+                            width
+                        } else {
+                            l
+                        }
+                    };
+                    t = gs.drain(..max).collect::<String>();
+                }
             }
-            r.push(format!("{t}\\\n"));
-            line = &line[i..];
+            r.push(format!("{t}\n"));
         }
-        r.push(format!("{line}\n"));
     }
     r.join("")
 }

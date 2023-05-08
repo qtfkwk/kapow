@@ -38,6 +38,8 @@
 * 2.7.0 (2023-05-05): Add new default behaviour to exit with an error if a
   `!run` directive fails and `-k` to *keep going* instead; update the Errors
   section of the readme
+* 2.7.1 (2023-05-08): Fix bug folding command output to columns when output
+  contains wide Unicode characters; update dependencies
 
 [`CHANGELOG.md`]: CHANGELOG.md
 [`bat`]: https://crates.io/crates/bat
