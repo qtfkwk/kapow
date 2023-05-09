@@ -7,8 +7,6 @@ use regex::{Captures, Regex};
 use std::io::BufRead;
 use unicode_segmentation::UnicodeSegmentation;
 
-const WRAP: usize = 66;
-
 /**
 Optionally print a message to stderr and exit with the given code
 */
@@ -41,6 +39,14 @@ struct Cli {
     /// Syntax higlight language
     #[arg(short, conflicts_with = "no_lang", default_value = "md")]
     lang: String,
+
+    /// Wrap !run directive columns
+    #[arg(short, default_value = "70")]
+    wrap: usize,
+
+    /// Wrap !run directive continuation
+    #[arg(short, value_name = "STRING", default_value = "\\")]
+    continuation: String,
 
     /// Ignore !run directive failures
     #[arg(short = 'k')]
@@ -105,6 +111,8 @@ fn main() {
                     &today_local,
                     &fence,
                     cli.ignore_run_fail,
+                    cli.wrap,
+                    &cli.continuation,
                 );
             }
             continue;
@@ -132,6 +140,8 @@ fn main() {
                         &today_local,
                         &fence,
                         cli.ignore_run_fail,
+                        cli.wrap,
+                        &cli.continuation,
                     );
                 }
                 cd(&original_dir);
@@ -169,6 +179,8 @@ fn process_line(
     today_local: &str,
     fence: &Option<String>,
     ignore_run_fail: bool,
+    wrap: usize,
+    continuation: &str,
 ) {
     let mut line = line.to_string();
     loop {
@@ -184,6 +196,8 @@ fn process_line(
                     command_q.drain(..).collect::<String>(),
                     fence,
                     ignore_run_fail,
+                    wrap,
+                    continuation,
                 );
             }
             break;
@@ -192,7 +206,7 @@ fn process_line(
             if let Some(command) = command.strip_suffix('\\') {
                 command_q.push(command.to_string());
             } else {
-                run(command, fence, ignore_run_fail);
+                run(command, fence, ignore_run_fail, wrap, continuation);
             }
             break;
         } else if let Some(path) = line.strip_prefix("!inc:") {
@@ -273,11 +287,17 @@ fn pipe<T: AsRef<str>>(command: T) -> (String, String, Option<i32>) {
 /**
 Run a command and print its stderr and stdout
 */
-fn run<T: AsRef<str>>(command: T, fence: &Option<String>, ignore_run_fail: bool) {
+fn run<T: AsRef<str>>(
+    command: T,
+    fence: &Option<String>,
+    ignore_run_fail: bool,
+    wrap: usize,
+    continuation: &str,
+) {
     let command = command.as_ref();
     let (stdout, stderr, code) = pipe(command);
-    let stderr = term_hard_wrap(&stderr, WRAP);
-    let stdout = term_hard_wrap(&stdout, WRAP);
+    let stderr = term_hard_wrap(&stderr, wrap, continuation);
+    let stdout = term_hard_wrap(&stdout, wrap, continuation);
     print!("{stderr}{stdout}");
     if !ignore_run_fail && code != Some(0) {
         if let Some(s) = fence {
@@ -301,42 +321,83 @@ fn cd(dir: &std::path::Path) {
 /**
 Wrap text with ANSI color codes to a fixed number of columns
 */
-fn term_hard_wrap(s: &str, width: usize) -> String {
-    fn len(s: &str) -> usize {
-        std::str::from_utf8(&strip_ansi_escapes::strip(s.as_bytes()).unwrap())
-            .unwrap()
-            .graphemes(true)
-            .map(|grapheme| if grapheme == "\t" { 8 } else { 1 })
-            .sum()
+fn term_hard_wrap(s: &str, width: usize, continuation: &str) -> String {
+    if width == 0 {
+        return s.to_string();
     }
-    let w = width - 1;
-    let mut r = vec![];
-    for line in s.lines() {
-        if len(line) <= width {
-            r.push(format!("{line}\n"));
-        } else {
-            let mut gs = line.graphemes(true).collect::<Vec<_>>();
-            let mut t = gs.drain(..width).collect::<String>();
-            while !gs.is_empty() {
-                let g = gs.remove(0);
-                t.push_str(g);
-                if len(&t) >= w {
-                    r.push(format!("{t}\\\n"));
-                    let max = {
-                        let l = gs.len();
-                        if l > width {
-                            width
-                        } else {
-                            l
-                        }
-                    };
-                    t = gs.drain(..max).collect::<String>();
-                }
+
+    // Input without ANSI color codes to graphemes
+    let b = String::from_utf8(strip_ansi_escapes::strip(s.as_bytes()).unwrap()).unwrap();
+    let mut gb = b.graphemes(true).collect::<Vec<_>>();
+
+    // Input graphemes
+    let mut ga = s.graphemes(true).collect::<Vec<_>>();
+
+    // Continuation graphemes
+    let gc = continuation.graphemes(true).collect::<Vec<_>>();
+    let cw = gc.len();
+    let cwp = cw + 1;
+    let w = width - cw; // initial max width; leave space for the continuation
+
+    let mut r = String::new(); // result
+    let mut l = 0; // current column
+    let mut ca; // current grapheme from `ga`
+    let mut cb; // current grapheme from `gb`
+
+    // Internal function update state
+    fn update(ca: &str, r: &mut String, l: &mut usize, counts: bool) {
+        if ca == "\t" {
+            // Tab counts as a color code for some reason, so it always counts
+            // against the line length.
+            // `8 - *l % 8` is he number of spaces from the current column to
+            // the nearest multiple of 8.
+            for _ in 0..(8 - *l % 8) {
+                *l += 1;
+                r.push(' ');
             }
-            r.push(format!("{t}\n"));
+        } else {
+            // Not a tab, so it only counts if not a color code.
+            if counts {
+                *l = if ca == "\n" { 0 } else { *l + 1 };
+            }
+            r.push_str(ca);
         }
     }
-    r.join("")
+
+    while !ga.is_empty() {
+        // Process line until the initial max width
+        while l < w {
+            if ga.is_empty() {
+                break;
+            }
+            ca = ga.remove(0);
+            cb = gb.remove(0);
+
+            // Process extra ANSI color code graphemes
+            while ca != cb && !ga.is_empty() {
+                update(ca, &mut r, &mut l, false);
+                ca = ga.remove(0);
+            }
+
+            // Process regular graphemes
+            update(ca, &mut r, &mut l, true);
+        }
+
+        // Process the last character(s) of the line
+        let gal = ga.len();
+        if gal == cw || (gal == cwp && ga[1] == "\n") {
+            // Continuation width characters left in the input or the current line, so just push
+            // them
+            r.push_str(ga.remove(0));
+        } else if gal != 0 {
+            // Unless done, insert the continuation
+            r.push_str(continuation);
+            r.push('\n');
+        }
+        l = 0;
+    }
+
+    r
 }
 
 /**

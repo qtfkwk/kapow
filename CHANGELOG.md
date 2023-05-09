@@ -40,6 +40,8 @@
   section of the readme
 * 2.7.1 (2023-05-08): Fix bug folding command output to columns when output
   contains wide Unicode characters; update dependencies
+* 2.8.0 (2023-05-09): Refactor fold command output to columns feature and add
+  the `-w` and `-c` options to control it; scrub the readme
 
 [`CHANGELOG.md`]: CHANGELOG.md
 [`bat`]: https://crates.io/crates/bat

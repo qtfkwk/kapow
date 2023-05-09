@@ -1,9 +1,9 @@
 [package]
 name = "kapow"
-version = "2.7.1"
+version = "2.8.0"
 edition = "2021"
 authors = ["qtfkwk <qtfkwk@gmail.com>"]
-homepage = "https://github.com/qtfkwk/kapow"
+repository = "https://github.com/qtfkwk/kapow"
 description = "Template processor"
 license = "MIT"
 

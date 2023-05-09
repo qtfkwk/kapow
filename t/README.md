@@ -1,20 +1,22 @@
 # About
 
-Kapow is a template processor that provides the following directives to support
-injecting file contents, command output, current date/time, elapsed time, etc in
-generated output.
+Kapow is a *template processor* that provides the following directives to
+support injecting file contents, command output, current date/time, elapsed
+time, etc in generated output.
 
 It can be used in some different ways:
 
-* Standard: Create a (Markdown) file with Kapow directives then run
-  `kapow path/to/file.ext`; optionally save the output via redirection:
-  `kapow path/to/file.ext >output.ext`
+* Standard: Create a (Markdown) file with kapow directives then run
+  `kapow [OPTIONS] path/to/file.ext`; optionally save the output via
+  redirection: `kapow [OPTIONS] path/to/file.ext >output.ext`
 * Shebang: Place `#!/usr/bin/env kapow` as the first line of a (Markdown) file,
   make it "executable" via `chmod +x file.ext`, then run via `./file.ext` (see
   note #3 under [block directives]).
+  Use env's `-S` option if passing options to kapow, for example:
+  `#!/usr/bin/env -S kapow -w 60`.
 
-Kapow is designed around Markdown syntax, but can be used with any text format
-that works with its directives.
+While kapow is designed around Markdown syntax, it can be used with any text
+format that works with its directives.
 
 [block directives]: #block-directives
 
@@ -37,8 +39,10 @@ Notes:
    current directory, it will be necessary to manually change to the source
    file's directory and then run via `./file.ext`.
 4. Block directives are entirely replaced by their contents/output, so you are
-   free to embed them inside of or as Markdown syntax... for example, as
-   listing contents, prepend a prompt showing the command, etc.
+   free to embed them inside or as Markdown syntax... for example, as listing
+   contents, prepend a prompt showing the command, etc.
+5. If a `!run` directive fails, kapow prints the error and stops processing,
+   unless the user specifies the `-k` option.
 
 ## Span directives
 
@@ -72,8 +76,9 @@ Directive | Example | Description
 cargo install kapow bat
 ```
 
-NOTE: If [`bat`] is installed, Kapow uses it for syntax highlighting and paging
-(see the `-p`, `-P`, `-H`, `-l` options).
+NOTE: Installing [`bat`] is optional, but if installed, kapow uses it for syntax
+highlighting and paging (see the `-p`, `-P`, `-H`, `-l` options); also it's a
+nice utility to have around.
 
 [`bat`]: https://crates.io/crates/bat
 
@@ -88,7 +93,7 @@ Code | Description
 101 | Could not read input file
 102 | Could not read included file
 103 | Could not change directory
-104 | Run directive command failed
+104 | !run directive command failed
 
 NOTE: The kapow process may not *appear* to have exited with these error codes
 in "normal usage" because output is piped to [`bat`] as a pager if it is
@@ -107,10 +112,17 @@ See the `readme` task in `Makefile.toml`:
     * `!inc:USAGE.md`
     * `` `\!now` `` (all variants)
 
+# Changelog
+
+Please find the [`CHANGELOG.md`] in the [repository].
+
+[`CHANGELOG.md`]: https://github.com/qtfkwk/kapow/blob/main/CHANGELOG.md
+[repository]: https://github.com/qtfkwk/kapow/
+
 # Development
 
 ```bash
-cargo install cargo-edit cargo-make cargo-outdated dtg kapow \
-miniserve
+cargo install cargo-audit cargo-edit cargo-make cargo-outdated dtg \
+kapow miniserve
 ```
 
