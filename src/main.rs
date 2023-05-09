@@ -6,6 +6,7 @@ use pager::Pager;
 use regex::{Captures, Regex};
 use std::io::BufRead;
 use unicode_segmentation::UnicodeSegmentation;
+use which::which;
 
 /**
 Optionally print a message to stderr and exit with the given code
@@ -36,6 +37,10 @@ struct Cli {
     #[arg(short = 'H', conflicts_with = "lang")]
     no_lang: bool,
 
+    /// Display all syntax highlight languages
+    #[arg(short = 'L')]
+    list_languages: bool,
+
     /// Syntax higlight language
     #[arg(short, conflicts_with = "no_lang", default_value = "md")]
     lang: String,
@@ -53,7 +58,7 @@ struct Cli {
     ignore_run_fail: bool,
 
     /// Print readme
-    #[arg(short, long, conflicts_with = "input_files")]
+    #[arg(short, long)]
     readme: bool,
 
     /// Source file(s)
@@ -80,6 +85,14 @@ fn main() {
         page(true, cli.no_page, cli.no_lang, &cli.lang);
         print!("{}", include_str!("../README.md"));
         exit!(0);
+    }
+    if cli.list_languages {
+        if which("bat").is_ok() {
+            run_("bat -L");
+            exit!(0);
+        } else {
+            exit!(105, "ERROR: Could not find a `bat` executable in PATH");
+        }
     }
     page(false, cli.page, cli.no_lang, &cli.lang);
     let start = Utc::now();
@@ -285,6 +298,19 @@ fn pipe<T: AsRef<str>>(command: T) -> (String, String, Option<i32>) {
 }
 
 /**
+Run a command and return its exit code
+*/
+fn run_<T: AsRef<str>>(command: T) -> Option<i32> {
+    std::process::Command::new("sh")
+        .args(["-c", command.as_ref()])
+        .spawn()
+        .unwrap()
+        .wait()
+        .unwrap()
+        .code()
+}
+
+/**
 Run a command and print its stderr and stdout
 */
 fn run<T: AsRef<str>>(
@@ -295,10 +321,15 @@ fn run<T: AsRef<str>>(
     continuation: &str,
 ) {
     let command = command.as_ref();
-    let (stdout, stderr, code) = pipe(command);
-    let stderr = term_hard_wrap(&stderr, wrap, continuation);
-    let stdout = term_hard_wrap(&stdout, wrap, continuation);
-    print!("{stderr}{stdout}");
+    let code = if wrap == 0 {
+        run_(command)
+    } else {
+        let (stdout, stderr, code) = pipe(command);
+        let stderr = term_hard_wrap(&stderr, wrap, continuation);
+        let stdout = term_hard_wrap(&stdout, wrap, continuation);
+        print!("{stderr}{stdout}");
+        code
+    };
     if !ignore_run_fail && code != Some(0) {
         if let Some(s) = fence {
             println!("{s}");

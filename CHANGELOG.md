@@ -29,7 +29,7 @@
   codes to 66 columns; add `\!elapsed` directive; fix issue when more than 1
   different span directives are on a line; improve readme; update dependencies
 * 2.6.0 (2023-05-03): Improved [`bat`] integration and added `-p`, `-P`, `-H`,
-  `-l` options; improve readme; [`CHANGELOG.md`]; eliminate `execute`
+  `-l` options; improve readme; `CHANGELOG.md`; eliminate `execute`
   dependency; update dependencies
 * 2.6.1 (2023-05-03): Fix changelog, help
 * 2.6.2 (2023-05-04): Fix bug: `ERROR: Could not change directory to "": No such
@@ -44,7 +44,8 @@
   the `-w` and `-c` options to control it; scrub the readme
 * 2.8.1 (2023-05-09): Scrub readme; update dependencies
 * 2.8.2 (2023-05-09): Set default wrap !run directive columns to 0 (don't wrap)
+* 2.9.0 (2023-05-10): Add `-L` option to list syntax highlight languages via
+  [`bat`]; enable unbuffered output for !run directives if not wrapping
 
-[`CHANGELOG.md`]: CHANGELOG.md
 [`bat`]: https://crates.io/crates/bat
 
