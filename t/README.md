@@ -77,8 +77,8 @@ cargo install kapow bat
 ```
 
 NOTE: Installing [`bat`] is optional, but if installed, kapow uses it for syntax
-highlighting and paging (see the `-p`, `-P`, `-H`, `-l` options); also it's a
-nice utility to have around.
+highlighting and paging (see the `-p`, `-P`, `-H`, `-l`, and `-r` options); also
+it's a nice utility to have around.
 
 [`bat`]: https://crates.io/crates/bat
 

@@ -20,6 +20,3 @@ Options:
   -V, --version    Print version
 ```
 
-* The `-r` option uses [`bat`] for paging and syntax highlighting if you have it
-  installed (optional).
-
