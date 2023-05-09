@@ -46,6 +46,7 @@
 * 2.8.2 (2023-05-09): Set default wrap !run directive columns to 0 (don't wrap)
 * 2.9.0 (2023-05-10): Add `-L` option to list syntax highlight languages via
   [`bat`]; enable unbuffered output for !run directives if not wrapping
+* 2.9.1 (2023-05-10): Update dependencies
 
 [`bat`]: https://crates.io/crates/bat
 
