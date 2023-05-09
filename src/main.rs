@@ -41,7 +41,7 @@ struct Cli {
     lang: String,
 
     /// Wrap !run directive columns
-    #[arg(short, default_value = "70")]
+    #[arg(short, default_value = "0")]
     wrap: usize,
 
     /// Wrap !run directive continuation

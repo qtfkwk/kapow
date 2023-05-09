@@ -49,15 +49,15 @@ Notes:
 Directive | Example | Description
 ---|---|---
 `` `!elapsed` `` | 0s | Processing time
-`` `!now` `` | 2023-05-09T14:25:12Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Tue 09 May 2023 10:25:12 EDT | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Tuesday 10:25 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Tue 09 May 2023 08:25:12 MDT | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Tuesday 08:25 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Tue 09 May 2023 04:25:12 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Tuesday 04:25 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Tuesday 14:25 | Current date/time in UTC and custom format
-`` `!now:x` `` | Xh48EPC | Current date/time in "x" format
+`` `!now` `` | 2023-05-09T14:37:08Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Tue 09 May 2023 10:37:08 EDT | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Tuesday 10:37 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Tue 09 May 2023 08:37:08 MDT | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Tuesday 08:37 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Tue 09 May 2023 04:37:08 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Tuesday 04:37 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Tuesday 14:37 | Current date/time in UTC and custom format
+`` `!now:x` `` | Xh48Eb8 | Current date/time in "x" format
 `` `!today` `` | 2023-05-09 | Current date in UTC / RFC 3339
 `` `!today:local` `` | 2023-05-09 | Current date in local timezone
 `` `!today:MST7MDT` `` | 2023-05-09 | Current date in custom timezone
@@ -86,7 +86,7 @@ it's a nice utility to have around.
 
 ```text
 $ kapow -V
-kapow 2.8.1
+kapow 2.8.2
 ```
 
 ```text
@@ -103,7 +103,7 @@ Options:
   -P               Do not page output
   -H               Disable syntax highlighting
   -l <LANG>        Syntax higlight language [default: md]
-  -w <WRAP>        Wrap !run directive columns [default: 70]
+  -w <WRAP>        Wrap !run directive columns [default: 0]
   -c <STRING>      Wrap !run directive continuation [default: \]
   -k               Ignore !run directive failures
   -r, --readme     Print readme

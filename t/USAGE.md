@@ -12,7 +12,7 @@ Options:
   -P               Do not page output
   -H               Disable syntax highlighting
   -l <LANG>        Syntax higlight language [default: md]
-  -w <WRAP>        Wrap !run directive columns [default: 70]
+  -w <WRAP>        Wrap !run directive columns [default: 0]
   -c <STRING>      Wrap !run directive continuation [default: \]
   -k               Ignore !run directive failures
   -r, --readme     Print readme

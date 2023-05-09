@@ -43,6 +43,7 @@
 * 2.8.0 (2023-05-09): Refactor fold command output to columns feature and add
   the `-w` and `-c` options to control it; scrub the readme
 * 2.8.1 (2023-05-09): Scrub readme; update dependencies
+* 2.8.2 (2023-05-09): Set default wrap !run directive columns to 0 (don't wrap)
 
 [`CHANGELOG.md`]: CHANGELOG.md
 [`bat`]: https://crates.io/crates/bat
