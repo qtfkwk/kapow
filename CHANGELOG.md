@@ -47,6 +47,9 @@
 * 2.9.0 (2023-05-10): Add `-L` option to list syntax highlight languages via
   [`bat`]; enable unbuffered output for !run directives if not wrapping
 * 2.9.1 (2023-05-10): Update dependencies
+* 2.10.0 (2023-05-12): Use [`termwrap`] crate and remove `strip-ansi-escapes`
+  and `unicode-segmentation` dependencies; update dependencies
 
 [`bat`]: https://crates.io/crates/bat
+[`termwrap`]: https://crates.io/crates/termwrap
 
