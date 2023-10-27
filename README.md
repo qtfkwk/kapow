@@ -49,21 +49,21 @@ Notes:
 Directive | Example | Description
 ---|---|---
 `` `!elapsed` `` | 0s | Processing time
-`` `!now` `` | 2023-05-12T13:19:11Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Fri 12 May 2023 09:19:11 EDT | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Friday 09:19 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Fri 12 May 2023 07:19:11 MDT | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Friday 07:19 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Fri 12 May 2023 03:19:11 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Friday 03:19 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Friday 13:19 | Current date/time in UTC and custom format
-`` `!now:x` `` | Xh4BDJB | Current date/time in "x" format
-`` `!today` `` | 2023-05-12 | Current date in UTC / RFC 3339
-`` `!today:local` `` | 2023-05-12 | Current date in local timezone
-`` `!today:MST7MDT` `` | 2023-05-12 | Current date in custom timezone
-`` `!today:MST7MDT:%v` `` | 12-May-2023 | Current date in custom timezone and format
-`` `!today:US/Hawaii` `` | 2023-05-12 | Current date in custom locale
-`` `!today:US/Hawaii:%x` `` | 05/12/23 | Current date in custom locale and format
+`` `!now` `` | 2023-10-27T18:44:48Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Fri 27 Oct 2023 14:44:48 EDT | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Friday 14:44 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Fri 27 Oct 2023 12:44:48 MDT | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Friday 12:44 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Fri 27 Oct 2023 08:44:48 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Friday 08:44 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Friday 18:44 | Current date/time in UTC and custom format
+`` `!now:x` `` | Xh9QIim | Current date/time in "x" format
+`` `!today` `` | 2023-10-27 | Current date in UTC / RFC 3339
+`` `!today:local` `` | 2023-10-27 | Current date in local timezone
+`` `!today:MST7MDT` `` | 2023-10-27 | Current date in custom timezone
+`` `!today:MST7MDT:%v` `` | 27-Oct-2023 | Current date in custom timezone and format
+`` `!today:US/Hawaii` `` | 2023-10-27 | Current date in custom locale
+`` `!today:US/Hawaii:%x` `` | 10/27/23 | Current date in custom locale and format
 `` `!today:UTC:%A` `` | Friday | Current date in UTC and custom format
 
 * Span directives must be placed inside a code span and may appear zero or more
@@ -86,7 +86,7 @@ it's a nice utility to have around.
 
 ```text
 $ kapow -V
-kapow 2.10.0
+kapow 2.12.0
 ```
 
 ```text
@@ -148,7 +148,7 @@ Please find the [`CHANGELOG.md`] in the [repository].
 # Development
 
 ```bash
-cargo install cargo-audit cargo-edit cargo-make cargo-outdated dtg \
-kapow miniserve
+cargo install b3sum cargo-audit cargo-edit cargo-make \
+cargo-outdated dtg kapow miniserve
 ```
 

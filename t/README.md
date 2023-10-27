@@ -1,6 +1,7 @@
 # About
 
-Kapow is a *template processor* that provides the following directives to
+Kapow is a *template processor* that \
+provides the following directives to
 support injecting file contents, command output, current date/time, elapsed
 time, etc in generated output.
 
@@ -122,7 +123,7 @@ Please find the [`CHANGELOG.md`] in the [repository].
 # Development
 
 ```bash
-cargo install cargo-audit cargo-edit cargo-make cargo-outdated dtg \
-kapow miniserve
+cargo install b3sum cargo-audit cargo-edit cargo-make \\
+cargo-outdated dtg kapow miniserve
 ```
 

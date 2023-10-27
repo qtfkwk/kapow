@@ -277,7 +277,13 @@ fn process_line(
                 .replace("`\\!elapsed", "`!elapsed")
                 .replace("`\\!now", "`!now")
                 .replace("`\\!today", "`!today");
-            println!("{line}");
+            if let Some(line) = line.strip_suffix("\\\\") {
+                println!("{line}\\");
+            } else if let Some(line) = line.strip_suffix('\\') {
+                print!("{line}");
+            } else {
+                println!("{line}");
+            }
             break;
         }
     }

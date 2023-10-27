@@ -49,6 +49,7 @@
 * 2.9.1 (2023-05-10): Update dependencies
 * 2.10.0 (2023-05-12): Use [`termwrap`] crate and remove `strip-ansi-escapes`
   and `unicode-segmentation` dependencies; update dependencies
+* 2.12.0 (2023-10-27): Update dependencies; add escaped wrap feature
 
 [`bat`]: https://crates.io/crates/bat
 [`termwrap`]: https://crates.io/crates/termwrap
