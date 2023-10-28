@@ -50,6 +50,8 @@
 * 2.10.0 (2023-05-12): Use [`termwrap`] crate and remove `strip-ansi-escapes`
   and `unicode-segmentation` dependencies; update dependencies
 * 2.12.0 (2023-10-27): Update dependencies; add escaped wrap feature
+* 2.13.0 (2023-10-28): Add details about escaped wrap and CLI usage to readme;
+  add example `build.md` with shebang kapow
 
 [`bat`]: https://crates.io/crates/bat
 [`termwrap`]: https://crates.io/crates/termwrap

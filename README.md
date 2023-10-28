@@ -14,11 +14,13 @@ It can be used in some different ways:
   note #3 under [block directives]).
   Use env's `-S` option if passing options to kapow, for example:
   `#!/usr/bin/env -S kapow -w 60`.
+  See [`build.md`] for an example.
 
 While kapow is designed around Markdown syntax, it can be used with any text
 format that works with its directives.
 
 [block directives]: #block-directives
+[`build.md`]: build.md
 
 ## Block directives
 
@@ -49,26 +51,63 @@ Notes:
 Directive | Example | Description
 ---|---|---
 `` `!elapsed` `` | 0s | Processing time
-`` `!now` `` | 2023-10-27T18:44:48Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Fri 27 Oct 2023 14:44:48 EDT | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Friday 14:44 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Fri 27 Oct 2023 12:44:48 MDT | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Friday 12:44 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Fri 27 Oct 2023 08:44:48 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Friday 08:44 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Friday 18:44 | Current date/time in UTC and custom format
-`` `!now:x` `` | Xh9QIim | Current date/time in "x" format
-`` `!today` `` | 2023-10-27 | Current date in UTC / RFC 3339
-`` `!today:local` `` | 2023-10-27 | Current date in local timezone
-`` `!today:MST7MDT` `` | 2023-10-27 | Current date in custom timezone
-`` `!today:MST7MDT:%v` `` | 27-Oct-2023 | Current date in custom timezone and format
-`` `!today:US/Hawaii` `` | 2023-10-27 | Current date in custom locale
-`` `!today:US/Hawaii:%x` `` | 10/27/23 | Current date in custom locale and format
-`` `!today:UTC:%A` `` | Friday | Current date in UTC and custom format
+`` `!now` `` | 2023-10-28T11:32:53Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Sat 28 Oct 2023 07:32:53 EDT | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Saturday 07:32 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Sat 28 Oct 2023 05:32:53 MDT | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Saturday 05:32 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Sat 28 Oct 2023 01:32:53 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Saturday 01:32 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Saturday 11:32 | Current date/time in UTC and custom format
+`` `!now:x` `` | Xh9RBWr | Current date/time in "x" format
+`` `!today` `` | 2023-10-28 | Current date in UTC / RFC 3339
+`` `!today:local` `` | 2023-10-28 | Current date in local timezone
+`` `!today:MST7MDT` `` | 2023-10-28 | Current date in custom timezone
+`` `!today:MST7MDT:%v` `` | 28-Oct-2023 | Current date in custom timezone and format
+`` `!today:US/Hawaii` `` | 2023-10-28 | Current date in custom locale
+`` `!today:US/Hawaii:%x` `` | 10/28/23 | Current date in custom locale and format
+`` `!today:UTC:%A` `` | Saturday | Current date in UTC and custom format
 
 * Span directives must be placed inside a code span and may appear zero or more
   times in any line.
 * Disable processing a span directive by escaping `!` with a backslash: `\!`.
+
+## Other features
+
+* Escaped wrap: End a line with a backslask `\` and it will be *unwrapped* in
+  the output; this enables an author to wrap long lines in the source but have
+  them be unwrapped by kapow.
+  If a backslash needs to be maintained, just use two backslashes `\\`.
+
+# Usage
+
+```text
+$ kapow -h
+KAPOW!
+
+Usage: kapow [OPTIONS] [PATH]...
+
+Arguments:
+  [PATH]...  Source file(s) [default: -]
+
+Options:
+  -p               Page output
+  -P               Do not page output
+  -H               Disable syntax highlighting
+  -L               Display all syntax highlight languages
+  -l <LANG>        Syntax higlight language [default: md]
+  -w <WRAP>        Wrap !run directive columns [default: 0]
+  -c <STRING>      Wrap !run directive continuation [default: \]
+  -k               Ignore !run directive failures
+  -r, --readme     Print readme
+  -h, --help       Print help
+  -V, --version    Print version
+```
+
+```text
+$ kapow -V
+kapow 2.13.0
+```
 
 # Install
 
@@ -86,7 +125,7 @@ it's a nice utility to have around.
 
 ```text
 $ kapow -V
-kapow 2.12.0
+kapow 2.13.0
 ```
 
 ```text

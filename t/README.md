@@ -1,7 +1,6 @@
 # About
 
-Kapow is a *template processor* that \
-provides the following directives to
+Kapow is a *template processor* that provides the following directives to
 support injecting file contents, command output, current date/time, elapsed
 time, etc in generated output.
 
@@ -15,11 +14,13 @@ It can be used in some different ways:
   note #3 under [block directives]).
   Use env's `-S` option if passing options to kapow, for example:
   `#!/usr/bin/env -S kapow -w 60`.
+  See [`build.md`] for an example.
 
 While kapow is designed around Markdown syntax, it can be used with any text
 format that works with its directives.
 
 [block directives]: #block-directives
+[`build.md`]: build.md
 
 ## Block directives
 
@@ -52,24 +53,49 @@ Directive | Example | Description
 `` `\!elapsed` `` | `!elapsed` | Processing time
 `` `\!now` `` | `!now` | Current date/time in UTC / RFC 3339
 `` `\!now:local` `` | `!now:local` | Current date/time in local timezone
-`` `\!now:local:%A %H:%M` `` | `!now:local:%A %H:%M` | Current date/time in local timezone and custom format
+`` `\!now:local:%A %H:%M` `` | `!now:local:%A %H:%M` | Current date/time in \
+local timezone and custom format
 `` `\!now:MST7MDT` `` | `!now:MST7MDT` | Current date/time in custom timezone
-`` `\!now:MST7MDT:%A %H:%M` `` | `!now:MST7MDT:%A %H:%M` | Current date/time in custom timezone and format
+`` `\!now:MST7MDT:%A %H:%M` `` | `!now:MST7MDT:%A %H:%M` | Current date/time \
+in custom timezone and format
 `` `\!now:US/Hawaii` `` | `!now:US/Hawaii` | Current date/time in custom locale
-`` `\!now:US/Hawaii:%A %H:%M` `` | `!now:US/Hawaii:%A %H:%M` | Current date/time in custom locale and format
-`` `\!now:UTC:%A %H:%M` `` | `!now:UTC:%A %H:%M` | Current date/time in UTC and custom format
+`` `\!now:US/Hawaii:%A %H:%M` `` | `!now:US/Hawaii:%A %H:%M` | Current \
+date/time in custom locale and format
+`` `\!now:UTC:%A %H:%M` `` | `!now:UTC:%A %H:%M` | Current date/time in UTC \
+and custom format
 `` `\!now:x` `` | `!now:x` | Current date/time in "x" format
 `` `\!today` `` | `!today` | Current date in UTC / RFC 3339
 `` `\!today:local` `` | `!today:local` | Current date in local timezone
 `` `\!today:MST7MDT` `` | `!today:MST7MDT` | Current date in custom timezone
-`` `\!today:MST7MDT:%v` `` | `!today:MST7MDT:%v` | Current date in custom timezone and format
+`` `\!today:MST7MDT:%v` `` | `!today:MST7MDT:%v` | Current date in custom \
+timezone and format
 `` `\!today:US/Hawaii` `` | `!today:US/Hawaii` | Current date in custom locale
-`` `\!today:US/Hawaii:%x` `` | `!today:US/Hawaii:%x` | Current date in custom locale and format
+`` `\!today:US/Hawaii:%x` `` | `!today:US/Hawaii:%x` | Current date in custom \
+locale and format
 `` `\!today:UTC:%A` `` | `!today:UTC:%A` | Current date in UTC and custom format
 
 * Span directives must be placed inside a code span and may appear zero or more
   times in any line.
 * Disable processing a span directive by escaping `!` with a backslash: `\!`.
+
+## Other features
+
+* Escaped wrap: End a line with a backslask `\` and it will be *unwrapped* in
+  the output; this enables an author to wrap long lines in the source but have
+  them be unwrapped by kapow.
+  If a backslash needs to be maintained, just use two backslashes `\\`.
+
+# Usage
+
+```text
+$ kapow -h
+!run:../target/release/kapow -h
+```
+
+```text
+$ kapow -V
+!run:../target/release/kapow -V
+```
 
 # Install
 
