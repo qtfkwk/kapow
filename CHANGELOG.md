@@ -54,6 +54,7 @@
   add example `build.md` with shebang kapow
 * 2.14.0 (2023-11-01): Recursive include; update dependencies
 * 2.15.0 (2023-11-01): Remove pager dependency on windows
+* 2.16.0 (2023-11-01): Add `-f` option
 
 [`bat`]: https://crates.io/crates/bat
 [`termwrap`]: https://crates.io/crates/termwrap

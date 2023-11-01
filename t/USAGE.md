@@ -8,6 +8,7 @@ Arguments:
   [PATH]...  Source file(s) [default: -]
 
 Options:
+  -f <FLAGS>       Flags (comma-separated list of flags to enable)
   -p               Page output
   -P               Do not page output
   -H               Disable syntax highlighting

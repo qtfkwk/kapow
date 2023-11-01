@@ -3,6 +3,7 @@ use clap::Parser;
 use dtg_lib::{tz, Dtg, Format};
 use lazy_static::lazy_static;
 use regex::{Captures, Regex};
+use std::collections::HashSet;
 use std::io::BufRead;
 use std::path::{Path, PathBuf};
 use termwrap::termwrap;
@@ -28,6 +29,10 @@ macro_rules! exit {
 #[derive(Parser)]
 #[command(version, max_term_width = 80)]
 struct Cli {
+    /// Flags (comma-separated list of flags to enable)
+    #[arg(short)]
+    flags: Option<String>,
+
     /// Page output
     #[arg(short, conflicts_with = "no_page")]
     page: bool,
@@ -98,6 +103,14 @@ fn main() {
         }
     }
     page(false, cli.page, cli.no_lang, &cli.lang);
+    let active_flags = if let Some(flags) = cli.flags {
+        flags
+            .split(',')
+            .map(|x| x.to_string())
+            .collect::<HashSet<String>>()
+    } else {
+        HashSet::new()
+    };
     let start = Utc::now();
     let d = Dtg::from_dt(&Utc.timestamp_opt(start.timestamp(), 0).unwrap());
     let now = d.rfc_3339();
@@ -108,6 +121,7 @@ fn main() {
     let today_local = d.format(&Some(Format::custom("%Y-%m-%d")), &Some(local_tz));
     let mut fence = None;
     let mut command_q = vec![];
+    let mut flags = vec![];
     for input_file in &cli.input_files {
         if input_file == Path::new("-") {
             let stdin = std::io::stdin();
@@ -117,6 +131,8 @@ fn main() {
                 process_line(
                     &line,
                     &mut command_q,
+                    &mut flags,
+                    &active_flags,
                     &start,
                     &d,
                     &now,
@@ -136,6 +152,8 @@ fn main() {
                 input_file,
                 fence,
                 &mut command_q,
+                &mut flags,
+                &active_flags,
                 &start,
                 &d,
                 &now,
@@ -156,6 +174,8 @@ fn process_file(
     input_file: &Path,
     fence: Option<String>,
     command_q: &mut Vec<String>,
+    flags: &mut Vec<String>,
+    active_flags: &HashSet<String>,
     start: &DateTime<Utc>,
     d: &Dtg,
     now: &str,
@@ -182,6 +202,8 @@ fn process_file(
                 process_line(
                     &line,
                     command_q,
+                    flags,
+                    active_flags,
                     start,
                     d,
                     now,
@@ -221,6 +243,8 @@ fn update_fence(line: &str, fence: Option<String>) -> Option<String> {
 fn process_line(
     line: &str,
     command_q: &mut Vec<String>,
+    flags: &mut Vec<String>,
+    active_flags: &HashSet<String>,
     start: &DateTime<Utc>,
     d: &Dtg,
     now: &str,
@@ -233,6 +257,12 @@ fn process_line(
     wrap: usize,
     continuation: &str,
 ) {
+    if !flags.is_empty() {
+        let flag = flags.last().unwrap();
+        if line != format!("!stop:{flag}") {
+            return;
+        }
+    }
     let mut line = line.to_string();
     loop {
         // Block directives...
@@ -266,6 +296,8 @@ fn process_line(
                 &PathBuf::from(path),
                 fence.clone(),
                 command_q,
+                flags,
+                active_flags,
                 start,
                 d,
                 now,
@@ -278,7 +310,22 @@ fn process_line(
                 continuation,
             );
             break;
-        // Span directives...
+        } else if let Some(flag) = line.strip_prefix("!start:") {
+            let flag = flag.to_string();
+            if !active_flags.contains(&flag) {
+                flags.push(flag);
+            }
+            break;
+        } else if let Some(flag) = line.strip_prefix("!stop:") {
+            let flag = flag.to_string();
+            if !active_flags.contains(&flag) {
+                let last = flags.pop().unwrap();
+                if flag != last {
+                    panic!();
+                }
+            }
+            break;
+            // Span directives...
         } else if line.contains("`!elapsed") {
             // !elapsed
             line = line.replace("`!elapsed`", &human_duration(Utc::now() - *start));
