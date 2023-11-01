@@ -53,6 +53,7 @@
 * 2.13.0 (2023-10-28): Add details about escaped wrap and CLI usage to readme;
   add example `build.md` with shebang kapow
 * 2.14.0 (2023-11-01): Recursive include; update dependencies
+* 2.15.0 (2023-11-01): Remove pager dependency on windows
 
 [`bat`]: https://crates.io/crates/bat
 [`termwrap`]: https://crates.io/crates/termwrap

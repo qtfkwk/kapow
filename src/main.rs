@@ -2,12 +2,14 @@ use chrono::{DateTime, TimeZone, Utc};
 use clap::Parser;
 use dtg_lib::{tz, Dtg, Format};
 use lazy_static::lazy_static;
-use pager::Pager;
 use regex::{Captures, Regex};
 use std::io::BufRead;
 use std::path::{Path, PathBuf};
 use termwrap::termwrap;
 use which::which;
+
+#[cfg(unix)]
+use pager::Pager;
 
 /**
 Optionally print a message to stderr and exit with the given code
@@ -427,12 +429,16 @@ Configure and set up the pager
 */
 fn page(readme: bool, no_page: bool, no_lang: bool, lang: &str) {
     let mut pager = String::from("bat -p");
+
     if readme == no_page {
         pager.push('P');
     }
+
     if !(lang.is_empty() || no_lang) {
         pager.push_str("l ");
         pager.push_str(lang);
     }
+
+    #[cfg(unix)]
     Pager::with_pager(&pager).setup();
 }
