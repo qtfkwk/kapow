@@ -5,6 +5,7 @@ use lazy_static::lazy_static;
 use pager::Pager;
 use regex::{Captures, Regex};
 use std::io::BufRead;
+use std::path::{Path, PathBuf};
 use termwrap::termwrap;
 use which::which;
 
@@ -63,7 +64,7 @@ struct Cli {
 
     /// Source file(s)
     #[arg(value_name = "PATH", default_value = "-")]
-    input_files: Vec<std::path::PathBuf>,
+    input_files: Vec<PathBuf>,
 }
 
 lazy_static! {
@@ -105,9 +106,8 @@ fn main() {
     let today_local = d.format(&Some(Format::custom("%Y-%m-%d")), &Some(local_tz));
     let mut fence = None;
     let mut command_q = vec![];
-    let original_dir = std::env::current_dir().expect("current directory");
     for input_file in &cli.input_files {
-        if input_file == std::path::Path::new("-") {
+        if input_file == Path::new("-") {
             let stdin = std::io::stdin();
             for line in stdin.lock().lines() {
                 let line = line.unwrap();
@@ -129,41 +129,77 @@ fn main() {
                 );
             }
             continue;
-        }
-        match std::fs::File::open(input_file) {
-            Ok(f) => {
-                let f = std::io::BufReader::new(f);
-                let dir = input_file.parent().expect("input file parent");
-                cd(dir);
-                for (i, line) in f.lines().enumerate() {
-                    let line = line.unwrap();
-                    if i == 0 && line.starts_with("#!") {
-                        continue;
-                    }
-                    fence = update_fence(&line, fence);
-                    process_line(
-                        &line,
-                        &mut command_q,
-                        &start,
-                        &d,
-                        &now,
-                        &now_local,
-                        &now_x,
-                        &today,
-                        &today_local,
-                        &fence,
-                        cli.ignore_run_fail,
-                        cli.wrap,
-                        &cli.continuation,
-                    );
-                }
-                cd(&original_dir);
-            }
-            Err(e) => {
-                exit!(101, "ERROR: Could not read input file {input_file:?}: {e}");
-            }
+        } else {
+            fence = process_file(
+                input_file,
+                fence,
+                &mut command_q,
+                &start,
+                &d,
+                &now,
+                &now_local,
+                &now_x,
+                &today,
+                &today_local,
+                cli.ignore_run_fail,
+                cli.wrap,
+                &cli.continuation,
+            );
         }
     }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn process_file(
+    input_file: &Path,
+    fence: Option<String>,
+    command_q: &mut Vec<String>,
+    start: &DateTime<Utc>,
+    d: &Dtg,
+    now: &str,
+    now_local: &str,
+    now_x: &str,
+    today: &str,
+    today_local: &str,
+    ignore_run_fail: bool,
+    wrap: usize,
+    continuation: &str,
+) -> Option<String> {
+    let mut fence = fence.clone();
+    match std::fs::File::open(input_file) {
+        Ok(f) => {
+            let f = std::io::BufReader::new(f);
+            let dir = input_file.parent().expect("input file parent");
+            let orig_dir = cd(dir);
+            for (i, line) in f.lines().enumerate() {
+                let line = line.unwrap();
+                if i == 0 && line.starts_with("#!") {
+                    continue;
+                }
+                fence = update_fence(&line, fence);
+                process_line(
+                    &line,
+                    command_q,
+                    start,
+                    d,
+                    now,
+                    now_local,
+                    now_x,
+                    today,
+                    today_local,
+                    &fence,
+                    ignore_run_fail,
+                    wrap,
+                    continuation,
+                );
+            }
+            cd(&orig_dir);
+        }
+        Err(e) => {
+            exit!(101, "ERROR: Could not read input file {input_file:?}: {e}");
+        }
+    }
+    fence
 }
 
 fn update_fence(line: &str, fence: Option<String>) -> Option<String> {
@@ -224,17 +260,21 @@ fn process_line(
             break;
         } else if let Some(path) = line.strip_prefix("!inc:") {
             // !inc:path
-            match std::fs::File::open(path) {
-                Ok(f) => {
-                    let f = std::io::BufReader::new(f);
-                    for i in f.lines() {
-                        println!("{}", i.unwrap());
-                    }
-                }
-                Err(e) => {
-                    exit!(102, "ERROR: Could not read included file {path:?}: {e}");
-                }
-            }
+            process_file(
+                &PathBuf::from(path),
+                fence.clone(),
+                command_q,
+                start,
+                d,
+                now,
+                now_local,
+                now_x,
+                today,
+                today_local,
+                ignore_run_fail,
+                wrap,
+                continuation,
+            );
             break;
         // Span directives...
         } else if line.contains("`!elapsed") {
@@ -348,11 +388,13 @@ fn run<T: AsRef<str>>(
 /**
 Change directory
 */
-fn cd(dir: &std::path::Path) {
-    if !["", "."].iter().any(|x| std::path::Path::new(x) == dir) {
+fn cd(dir: &Path) -> PathBuf {
+    let r = std::env::current_dir().unwrap();
+    if !["", "."].iter().any(|x| Path::new(x) == dir) {
         std::env::set_current_dir(dir)
             .unwrap_or_else(|e| exit!(103, "ERROR: Could not change directory to {dir:?}: {e}"));
     }
+    r
 }
 
 /**
