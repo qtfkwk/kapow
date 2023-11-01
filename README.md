@@ -28,7 +28,7 @@ Directive | Description
 ---|---
 `!inc:path` | Include file contents; path is relative to its containing file
 `!run:command` | Run command and insert stdout
-`!start:name` - `!stop:name`| Optional content included only if `name` is provided in `-f` value
+`!start:name` - `!stop:name` | Optional content included only if `name` is provided in `-f` value
 
 Notes:
 
@@ -52,15 +52,15 @@ Notes:
 Directive | Example | Description
 ---|---|---
 `` `!elapsed` `` | 0s | Processing time
-`` `!now` `` | 2023-11-01T21:12:20Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Wed 01 Nov 2023 17:12:20 EDT | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Wednesday 17:12 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Wed 01 Nov 2023 15:12:20 MDT | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Wednesday 15:12 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Wed 01 Nov 2023 11:12:20 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Wednesday 11:12 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Wednesday 21:12 | Current date/time in UTC and custom format
-`` `!now:x` `` | XhA0LCK | Current date/time in "x" format
+`` `!now` `` | 2023-11-01T21:16:36Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Wed 01 Nov 2023 17:16:36 EDT | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Wednesday 17:16 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Wed 01 Nov 2023 15:16:36 MDT | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Wednesday 15:16 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Wed 01 Nov 2023 11:16:36 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Wednesday 11:16 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Wednesday 21:16 | Current date/time in UTC and custom format
+`` `!now:x` `` | XhA0LGa | Current date/time in "x" format
 `` `!today` `` | 2023-11-01 | Current date in UTC / RFC 3339
 `` `!today:local` `` | 2023-11-01 | Current date in local timezone
 `` `!today:MST7MDT` `` | 2023-11-01 | Current date in custom timezone
@@ -108,7 +108,7 @@ Options:
 
 ```text
 $ kapow -V
-kapow 2.16.0
+kapow 2.16.1
 ```
 
 # Install
@@ -127,7 +127,7 @@ it's a nice utility to have around.
 
 ```text
 $ kapow -V
-kapow 2.16.0
+kapow 2.16.1
 ```
 
 ```text

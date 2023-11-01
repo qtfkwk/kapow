@@ -5,7 +5,7 @@ Directive | Description
 ---|---
 `!inc:path` | Include file contents; path is relative to its containing file
 `!run:command` | Run command and insert stdout
-`!start:name` - `!stop:name`| Optional content included only if `name` is provided in `-f` value
+`!start:name` - `!stop:name` | Optional content included only if `name` is provided in `-f` value
 
 !start:comment
 THIS IS A COMMENT AND DOES NOT APPEAR IN THE OUTPUT UNLESS WE RUN:
