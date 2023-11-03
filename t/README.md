@@ -1,17 +1,19 @@
 !inc:ABOUT.md
+
 ## Block directives
 
 Directive | Description
 ---|---
 `!inc:path` | Include file contents; path is relative to its containing file
 `!run:command` | Run command and insert stdout
-`!start:name` - `!stop:name` | Optional content included only if `name` is provided in `-f` value
+`!start:name` - `!stop:name` | Optional content included only if `name` is \
+provided in `-f` value
 
 !start:comment
 THIS IS A COMMENT AND DOES NOT APPEAR IN THE OUTPUT UNLESS WE RUN:
 `kapow -f comment ...`
-
 !stop:comment
+
 Notes:
 
 1. Block directives must be placed at the beginning of a line.
@@ -63,22 +65,15 @@ locale and format
 
 ## Other features
 
-* Escaped wrap: End a line with a backslask `\` and it will be *unwrapped* in
-  the output; this enables an author to wrap long lines in the source but have
-  them be unwrapped by kapow.
-  If a backslash needs to be maintained, just use two backslashes `\\`.
-
-# Usage
-
-```text
-$ kapow -h
-!run:../target/release/kapow -h
-```
-
-```text
-$ kapow -V
-!run:../target/release/kapow -V
-```
+* Escaped wrap: End a line with a single backslash `\` and it will be
+  *unwrapped* in the output; this enables an author to wrap long lines in the
+  source but have them be unwrapped by kapow.
+  If trailing backslash(es) need to be maintained, add an additional backslash
+  and the line will not be unwrapped and the extra backslash will be removed.
+* Relative image paths: Markdown images (`![alt](path "title")`) with a local
+  path are processed relative to the containing file, unless the `-R` option is
+  used to disable this feature.
+* Eliminate multiple empty lines.
 
 # Install
 
@@ -87,15 +82,17 @@ cargo install kapow bat
 ```
 
 NOTE: Installing [`bat`] is optional, but if installed, kapow uses it for syntax
-highlighting and paging (see the `-p`, `-P`, `-H`, `-l`, and `-r` options); also
-it's a nice utility to have around.
+highlighting and paging (if on a Linux, macOS, or UNIX system; see the `-p`,
+`-P`, `-H`, `-l`, and `-r` options); also it's a nice utility to have around.
 
 [`bat`]: https://crates.io/crates/bat
 
 # Usage
 
 !inc:VERSION.md
+
 !inc:USAGE.md
+
 # Errors
 
 Code | Description
@@ -121,6 +118,8 @@ See the `readme` task in `Makefile.toml`:
     * `!inc:VERSION.md`
     * `!inc:USAGE.md`
     * `` `\!now` `` (all variants)
+    * Escaped wraps
+    * Relative image path
 
 # Changelog
 
@@ -132,7 +131,7 @@ Please find the [`CHANGELOG.md`] in the [repository].
 # Development
 
 ```bash
-cargo install b3sum cargo-audit cargo-edit cargo-make \\
+cargo install b3sum bat cargo-audit cargo-edit cargo-make \\
 cargo-outdated dtg kapow miniserve
 ```
 

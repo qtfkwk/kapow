@@ -1,5 +1,7 @@
 # About
 
+![](t/about/logo.png)
+
 Kapow is a *template processor* that provides the following directives to
 support injecting file contents, command output, current date/time, elapsed
 time, etc in generated output.
@@ -52,22 +54,22 @@ Notes:
 Directive | Example | Description
 ---|---|---
 `` `!elapsed` `` | 0s | Processing time
-`` `!now` `` | 2023-11-01T21:16:36Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Wed 01 Nov 2023 17:16:36 EDT | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Wednesday 17:16 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Wed 01 Nov 2023 15:16:36 MDT | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Wednesday 15:16 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Wed 01 Nov 2023 11:16:36 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Wednesday 11:16 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Wednesday 21:16 | Current date/time in UTC and custom format
-`` `!now:x` `` | XhA0LGa | Current date/time in "x" format
-`` `!today` `` | 2023-11-01 | Current date in UTC / RFC 3339
-`` `!today:local` `` | 2023-11-01 | Current date in local timezone
-`` `!today:MST7MDT` `` | 2023-11-01 | Current date in custom timezone
-`` `!today:MST7MDT:%v` `` |  1-Nov-2023 | Current date in custom timezone and format
-`` `!today:US/Hawaii` `` | 2023-11-01 | Current date in custom locale
-`` `!today:US/Hawaii:%x` `` | 11/01/23 | Current date in custom locale and format
-`` `!today:UTC:%A` `` | Wednesday | Current date in UTC and custom format
+`` `!now` `` | 2023-11-03T14:28:33Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Fri 03 Nov 2023 10:28:33 EDT | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Friday 10:28 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Fri 03 Nov 2023 08:28:33 MDT | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Friday 08:28 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Fri 03 Nov 2023 04:28:33 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Friday 04:28 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Friday 14:28 | Current date/time in UTC and custom format
+`` `!now:x` `` | XhA2ESX | Current date/time in "x" format
+`` `!today` `` | 2023-11-03 | Current date in UTC / RFC 3339
+`` `!today:local` `` | 2023-11-03 | Current date in local timezone
+`` `!today:MST7MDT` `` | 2023-11-03 | Current date in custom timezone
+`` `!today:MST7MDT:%v` `` |  3-Nov-2023 | Current date in custom timezone and format
+`` `!today:US/Hawaii` `` | 2023-11-03 | Current date in custom locale
+`` `!today:US/Hawaii:%x` `` | 11/03/23 | Current date in custom locale and format
+`` `!today:UTC:%A` `` | Friday | Current date in UTC and custom format
 
 * Span directives must be placed inside a code span and may appear zero or more
   times in any line.
@@ -75,41 +77,15 @@ Directive | Example | Description
 
 ## Other features
 
-* Escaped wrap: End a line with a backslask `\` and it will be *unwrapped* in
-  the output; this enables an author to wrap long lines in the source but have
-  them be unwrapped by kapow.
-  If a backslash needs to be maintained, just use two backslashes `\\`.
-
-# Usage
-
-```text
-$ kapow -h
-KAPOW!
-
-Usage: kapow [OPTIONS] [PATH]...
-
-Arguments:
-  [PATH]...  Source file(s) [default: -]
-
-Options:
-  -f <FLAGS>       Flags (comma-separated list of flags to enable)
-  -p               Page output
-  -P               Do not page output
-  -H               Disable syntax highlighting
-  -L               Display all syntax highlight languages
-  -l <LANG>        Syntax higlight language [default: md]
-  -w <WRAP>        Wrap !run directive columns [default: 0]
-  -c <STRING>      Wrap !run directive continuation [default: \]
-  -k               Ignore !run directive failures
-  -r, --readme     Print readme
-  -h, --help       Print help
-  -V, --version    Print version
-```
-
-```text
-$ kapow -V
-kapow 2.16.1
-```
+* Escaped wrap: End a line with a single backslash `\` and it will be
+  *unwrapped* in the output; this enables an author to wrap long lines in the
+  source but have them be unwrapped by kapow.
+  If trailing backslash(es) need to be maintained, add an additional backslash
+  and the line will not be unwrapped and the extra backslash will be removed.
+* Relative image paths: Markdown images (`![alt](path "title")`) with a local
+  path are processed relative to the containing file, unless the `-R` option is
+  used to disable this feature.
+* Eliminate multiple empty lines.
 
 # Install
 
@@ -118,8 +94,8 @@ cargo install kapow bat
 ```
 
 NOTE: Installing [`bat`] is optional, but if installed, kapow uses it for syntax
-highlighting and paging (see the `-p`, `-P`, `-H`, `-l`, and `-r` options); also
-it's a nice utility to have around.
+highlighting and paging (if on a Linux, macOS, or UNIX system; see the `-p`,
+`-P`, `-H`, `-l`, and `-r` options); also it's a nice utility to have around.
 
 [`bat`]: https://crates.io/crates/bat
 
@@ -127,7 +103,7 @@ it's a nice utility to have around.
 
 ```text
 $ kapow -V
-kapow 2.16.1
+kapow 2.17.0
 ```
 
 ```text
@@ -149,6 +125,7 @@ Options:
   -w <WRAP>        Wrap !run directive columns [default: 0]
   -c <STRING>      Wrap !run directive continuation [default: \]
   -k               Ignore !run directive failures
+  -R               Disable relative image paths
   -r, --readme     Print readme
   -h, --help       Print help
   -V, --version    Print version
@@ -179,6 +156,8 @@ See the `readme` task in `Makefile.toml`:
     * `!inc:VERSION.md`
     * `!inc:USAGE.md`
     * `` `!now` `` (all variants)
+    * Escaped wraps
+    * Relative image path
 
 # Changelog
 
@@ -190,7 +169,7 @@ Please find the [`CHANGELOG.md`] in the [repository].
 # Development
 
 ```bash
-cargo install b3sum cargo-audit cargo-edit cargo-make \
+cargo install b3sum bat cargo-audit cargo-edit cargo-make \
 cargo-outdated dtg kapow miniserve
 ```
 

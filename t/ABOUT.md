@@ -1,5 +1,7 @@
 # About
 
+![](about/logo.png)
+
 !inc:about/paragraph1.md
 It can be used in some different ways:
 

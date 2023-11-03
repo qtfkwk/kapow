@@ -65,6 +65,10 @@ struct Cli {
     #[arg(short = 'k')]
     ignore_run_fail: bool,
 
+    /// Disable relative image paths
+    #[arg(short = 'R')]
+    no_relative_images: bool,
+
     /// Print readme
     #[arg(short, long)]
     readme: bool,
@@ -81,7 +85,11 @@ lazy_static! {
     /// Regular expression for `!today` directive
     static ref TODAY: Regex = Regex::new(r"`!today:([^`]*)`").unwrap();
 
+    /// Regular expression for a markdown code block fence
     static ref FENCE_RE: Regex = Regex::new(r"^(\s*(```+|~~~+))").unwrap();
+
+    /// Regular expression for a markdown image `![alt](path "title")`
+    static ref IMAGE: Regex = Regex::new(r#"!\[([^\]]*)\]\(([^\) ]+)( *"["]*"|)\)"#).unwrap();
 }
 
 /**
@@ -90,7 +98,9 @@ Main function
 fn main() {
     let cli = Cli::parse();
     if cli.readme {
+        #[cfg(unix)]
         page(true, cli.no_page, cli.no_lang, &cli.lang);
+
         print!("{}", include_str!("../README.md"));
         exit!(0);
     }
@@ -102,7 +112,10 @@ fn main() {
             exit!(105, "ERROR: Could not find a `bat` executable in PATH");
         }
     }
+
+    #[cfg(unix)]
     page(false, cli.page, cli.no_lang, &cli.lang);
+
     let active_flags = if let Some(flags) = cli.flags {
         flags
             .split(',')
@@ -122,13 +135,15 @@ fn main() {
     let mut fence = None;
     let mut command_q = vec![];
     let mut flags = vec![];
+    let root_dir = std::env::current_dir().unwrap();
+    let mut prev_line = None;
     for input_file in &cli.input_files {
         if input_file == Path::new("-") {
             let stdin = std::io::stdin();
             for line in stdin.lock().lines() {
                 let line = line.unwrap();
                 fence = update_fence(&line, fence);
-                process_line(
+                prev_line = process_line(
                     &line,
                     &mut command_q,
                     &mut flags,
@@ -144,11 +159,15 @@ fn main() {
                     cli.ignore_run_fail,
                     cli.wrap,
                     &cli.continuation,
+                    !cli.no_relative_images,
+                    &root_dir,
+                    &root_dir,
+                    &prev_line,
                 );
             }
             continue;
         } else {
-            fence = process_file(
+            (fence, prev_line) = process_file(
                 input_file,
                 fence,
                 &mut command_q,
@@ -164,6 +183,10 @@ fn main() {
                 cli.ignore_run_fail,
                 cli.wrap,
                 &cli.continuation,
+                !cli.no_relative_images,
+                &root_dir,
+                &root_dir,
+                &prev_line,
             );
         }
     }
@@ -186,12 +209,22 @@ fn process_file(
     ignore_run_fail: bool,
     wrap: usize,
     continuation: &str,
-) -> Option<String> {
+    relative_images: bool,
+    dir: &Path,
+    root_dir: &Path,
+    prev_line: &Option<String>,
+) -> (Option<String>, Option<String>) {
     let mut fence = fence.clone();
+    let mut prev_line = prev_line.clone();
     match std::fs::File::open(input_file) {
         Ok(f) => {
             let f = std::io::BufReader::new(f);
-            let dir = input_file.parent().expect("input file parent");
+            let input_file = if input_file.is_relative() {
+                dir.join(input_file)
+            } else {
+                input_file.to_owned()
+            };
+            let dir = input_file.parent().unwrap();
             let orig_dir = cd(dir);
             for (i, line) in f.lines().enumerate() {
                 let line = line.unwrap();
@@ -199,7 +232,7 @@ fn process_file(
                     continue;
                 }
                 fence = update_fence(&line, fence);
-                process_line(
+                prev_line = process_line(
                     &line,
                     command_q,
                     flags,
@@ -215,6 +248,10 @@ fn process_file(
                     ignore_run_fail,
                     wrap,
                     continuation,
+                    relative_images,
+                    dir,
+                    root_dir,
+                    &prev_line,
                 );
             }
             cd(&orig_dir);
@@ -223,7 +260,7 @@ fn process_file(
             exit!(101, "ERROR: Could not read input file {input_file:?}: {e}");
         }
     }
-    fence
+    (fence, prev_line)
 }
 
 fn update_fence(line: &str, fence: Option<String>) -> Option<String> {
@@ -256,14 +293,19 @@ fn process_line(
     ignore_run_fail: bool,
     wrap: usize,
     continuation: &str,
-) {
+    relative_images: bool,
+    dir: &Path,
+    root_dir: &Path,
+    prev_line: &Option<String>,
+) -> Option<String> {
+    let mut line = line.to_string();
+    let mut prev_line = prev_line.clone();
     if !flags.is_empty() {
         let flag = flags.last().unwrap();
         if line != format!("!stop:{flag}") {
-            return;
+            return prev_line;
         }
     }
-    let mut line = line.to_string();
     loop {
         // Block directives...
         if !command_q.is_empty() {
@@ -292,30 +334,37 @@ fn process_line(
             break;
         } else if let Some(path) = line.strip_prefix("!inc:") {
             // !inc:path
-            process_file(
-                &PathBuf::from(path),
-                fence.clone(),
-                command_q,
-                flags,
-                active_flags,
-                start,
-                d,
-                now,
-                now_local,
-                now_x,
-                today,
-                today_local,
-                ignore_run_fail,
-                wrap,
-                continuation,
-            );
-            break;
+            #[allow(unused_assignments)]
+            {
+                (_, prev_line) = process_file(
+                    &PathBuf::from(path),
+                    fence.clone(),
+                    command_q,
+                    flags,
+                    active_flags,
+                    start,
+                    d,
+                    now,
+                    now_local,
+                    now_x,
+                    today,
+                    today_local,
+                    ignore_run_fail,
+                    wrap,
+                    continuation,
+                    relative_images,
+                    dir,
+                    root_dir,
+                    &prev_line,
+                );
+            }
+            return prev_line;
         } else if let Some(flag) = line.strip_prefix("!start:") {
             let flag = flag.to_string();
             if !active_flags.contains(&flag) {
                 flags.push(flag);
             }
-            break;
+            return prev_line;
         } else if let Some(flag) = line.strip_prefix("!stop:") {
             let flag = flag.to_string();
             if !active_flags.contains(&flag) {
@@ -324,8 +373,8 @@ fn process_line(
                     panic!();
                 }
             }
-            break;
-            // Span directives...
+            return prev_line;
+        // Span directives...
         } else if line.contains("`!elapsed") {
             // !elapsed
             line = line.replace("`!elapsed`", &human_duration(Utc::now() - *start));
@@ -362,20 +411,48 @@ fn process_line(
                 .to_string();
         // Done...
         } else {
+            // Process image paths relative to their containing file
+            if relative_images {
+                let mut line2 = line.clone();
+                for (full, [alt, url, title]) in IMAGE.captures_iter(&line).map(|c| c.extract()) {
+                    if !url.starts_with("http") {
+                        let new_url = dir
+                            .join(url)
+                            .strip_prefix(root_dir)
+                            .unwrap()
+                            .display()
+                            .to_string();
+                        let new_full = format!("![{alt}]({new_url}{title})");
+                        line2 = line2.replace(full, &new_full);
+                    }
+                }
+                line = line2;
+            }
+
+            // Process escaped span directives
             line = line
                 .replace("`\\!elapsed", "`!elapsed")
                 .replace("`\\!now", "`!now")
                 .replace("`\\!today", "`!today");
-            if let Some(line) = line.strip_suffix("\\\\") {
-                println!("{line}\\");
-            } else if let Some(line) = line.strip_suffix('\\') {
-                print!("{line}");
+
+            // Process escaped wraps
+            line = if let Some(s) = line.strip_suffix("\\\\") {
+                format!("{s}\\\n")
+            } else if let Some(s) = line.strip_suffix('\\') {
+                s.to_string()
             } else {
-                println!("{line}");
+                format!("{line}\n")
+            };
+
+            // Eliminate multiple empty lines
+            if prev_line.is_none() || prev_line.as_ref().unwrap() != "\n" || line != "\n" {
+                print!("{line}");
             }
+
             break;
         }
     }
+    Some(line)
 }
 
 /**
@@ -486,6 +563,5 @@ fn page(readme: bool, no_page: bool, no_lang: bool, lang: &str) {
         pager.push_str(lang);
     }
 
-    #[cfg(unix)]
     Pager::with_pager(&pager).setup();
 }

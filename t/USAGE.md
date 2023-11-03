@@ -17,6 +17,7 @@ Options:
   -w <WRAP>        Wrap !run directive columns [default: 0]
   -c <STRING>      Wrap !run directive continuation [default: \]
   -k               Ignore !run directive failures
+  -R               Disable relative image paths
   -r, --readme     Print readme
   -h, --help       Print help
   -V, --version    Print version

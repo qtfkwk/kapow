@@ -56,6 +56,9 @@
 * 2.15.0 (2023-11-01): Remove pager dependency on windows
 * 2.16.0 (2023-11-01): Add `-f` option
 * 2.16.1 (2023-11-01): Fix readme
+* 2.17.0 (2023-11-03): Add relative image path feature and `-R` option to
+  disable it; eliminate multiple empty lines; avoid calling page function on
+  windows; fix readme
 
 [`bat`]: https://crates.io/crates/bat
 [`termwrap`]: https://crates.io/crates/termwrap
