@@ -548,6 +548,7 @@ fn human_duration(duration: chrono::Duration) -> String {
     .join("")
 }
 
+#[cfg(unix)]
 /**
 Configure and set up the pager
 */

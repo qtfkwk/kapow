@@ -59,6 +59,7 @@
 * 2.17.0 (2023-11-03): Add relative image path feature and `-R` option to
   disable it; eliminate multiple empty lines; avoid calling page function on
   windows; fix readme
+* 2.17.1 (2023-11-03): Fix issue with pager on windows
 
 [`bat`]: https://crates.io/crates/bat
 [`termwrap`]: https://crates.io/crates/termwrap

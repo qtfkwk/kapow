@@ -54,15 +54,15 @@ Notes:
 Directive | Example | Description
 ---|---|---
 `` `!elapsed` `` | 0s | Processing time
-`` `!now` `` | 2023-11-03T14:28:33Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Fri 03 Nov 2023 10:28:33 EDT | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Friday 10:28 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Fri 03 Nov 2023 08:28:33 MDT | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Friday 08:28 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Fri 03 Nov 2023 04:28:33 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Friday 04:28 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Friday 14:28 | Current date/time in UTC and custom format
-`` `!now:x` `` | XhA2ESX | Current date/time in "x" format
+`` `!now` `` | 2023-11-03T16:28:07Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Fri 03 Nov 2023 12:28:07 EDT | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Friday 12:28 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Fri 03 Nov 2023 10:28:07 MDT | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Friday 10:28 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Fri 03 Nov 2023 06:28:07 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Friday 06:28 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Friday 16:28 | Current date/time in UTC and custom format
+`` `!now:x` `` | XhA2GS7 | Current date/time in "x" format
 `` `!today` `` | 2023-11-03 | Current date in UTC / RFC 3339
 `` `!today:local` `` | 2023-11-03 | Current date in local timezone
 `` `!today:MST7MDT` `` | 2023-11-03 | Current date in custom timezone
@@ -103,7 +103,7 @@ highlighting and paging (if on a Linux, macOS, or UNIX system; see the `-p`,
 
 ```text
 $ kapow -V
-kapow 2.17.0
+kapow 2.17.1
 ```
 
 ```text
