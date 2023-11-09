@@ -2,6 +2,7 @@ use chrono::{DateTime, TimeZone, Utc};
 use clap::Parser;
 use dtg_lib::{tz, Dtg, Format};
 use lazy_static::lazy_static;
+use path_slash::PathExt;
 use regex::{Captures, Regex};
 use std::collections::HashSet;
 use std::io::BufRead;
@@ -420,7 +421,8 @@ fn process_line(
                             .join(url)
                             .strip_prefix(root_dir)
                             .unwrap()
-                            .display()
+                            .to_slash()
+                            .unwrap()
                             .to_string();
                         let new_full = format!("![{alt}]({new_url}{title})");
                         line2 = line2.replace(full, &new_full);

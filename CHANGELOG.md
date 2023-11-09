@@ -60,6 +60,8 @@
   disable it; eliminate multiple empty lines; avoid calling page function on
   windows; fix readme
 * 2.17.1 (2023-11-03): Fix issue with pager on windows
+* 2.18.0 (2023-11-09): Fix issue with folder separators on windows;
+  update dependencies
 
 [`bat`]: https://crates.io/crates/bat
 [`termwrap`]: https://crates.io/crates/termwrap
