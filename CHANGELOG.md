@@ -62,6 +62,8 @@
 * 2.17.1 (2023-11-03): Fix issue with pager on windows
 * 2.18.0 (2023-11-09): Fix issue with folder separators on windows;
   update dependencies
+* 2.19.0 (2023-11-13): Convert cargo-make Makefile.toml to mkrs Makefile.md;
+  update dependencies
 
 [`bat`]: https://crates.io/crates/bat
 [`termwrap`]: https://crates.io/crates/termwrap
