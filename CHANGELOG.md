@@ -64,6 +64,7 @@
   update dependencies
 * 2.19.0 (2023-11-13): Convert cargo-make Makefile.toml to mkrs Makefile.md;
   update dependencies
+    * 2.19.1 (2024-07-23): Update dependencies; fix makefile
 
 [`bat`]: https://crates.io/crates/bat
 [`termwrap`]: https://crates.io/crates/termwrap
