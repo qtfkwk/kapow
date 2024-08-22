@@ -1,4 +1,3 @@
-use chrono::{DateTime, TimeZone, Utc};
 use clap::Parser;
 use dtg_lib::{tz, Dtg, Format};
 use lazy_static::lazy_static;
@@ -125,12 +124,11 @@ fn main() {
     } else {
         HashSet::new()
     };
-    let start = Utc::now();
-    let d = Dtg::from_dt(&Utc.timestamp_opt(start.timestamp(), 0).unwrap());
+    let d = Dtg::now();
     let now = d.rfc_3339();
     let now_x = d.x_format();
     let local_tz = tz("local").unwrap();
-    let now_local = d.default(&Some(local_tz));
+    let now_local = d.default(&Some(local_tz.clone()));
     let today = d.format(&Some(Format::custom("%Y-%m-%d")), &None);
     let today_local = d.format(&Some(Format::custom("%Y-%m-%d")), &Some(local_tz));
     let mut fence = None;
@@ -149,7 +147,6 @@ fn main() {
                     &mut command_q,
                     &mut flags,
                     &active_flags,
-                    &start,
                     &d,
                     &now,
                     &now_local,
@@ -174,7 +171,6 @@ fn main() {
                 &mut command_q,
                 &mut flags,
                 &active_flags,
-                &start,
                 &d,
                 &now,
                 &now_local,
@@ -200,7 +196,6 @@ fn process_file(
     command_q: &mut Vec<String>,
     flags: &mut Vec<String>,
     active_flags: &HashSet<String>,
-    start: &DateTime<Utc>,
     d: &Dtg,
     now: &str,
     now_local: &str,
@@ -238,7 +233,6 @@ fn process_file(
                     command_q,
                     flags,
                     active_flags,
-                    start,
                     d,
                     now,
                     now_local,
@@ -283,7 +277,6 @@ fn process_line(
     command_q: &mut Vec<String>,
     flags: &mut Vec<String>,
     active_flags: &HashSet<String>,
-    start: &DateTime<Utc>,
     d: &Dtg,
     now: &str,
     now_local: &str,
@@ -343,7 +336,6 @@ fn process_line(
                     command_q,
                     flags,
                     active_flags,
-                    start,
                     d,
                     now,
                     now_local,
@@ -376,9 +368,9 @@ fn process_line(
             }
             return prev_line;
         // Span directives...
-        } else if line.contains("`!elapsed") {
+        } else if line.contains("`!elapsed`") {
             // !elapsed
-            line = line.replace("`!elapsed`", &human_duration(Utc::now() - *start));
+            line = line.replace("`!elapsed`", &d.elapsed().unwrap().to_string());
         } else if line.contains("`!now") {
             // !now
             line = line
@@ -523,31 +515,6 @@ fn cd(dir: &Path) -> PathBuf {
             .unwrap_or_else(|e| exit!(103, "ERROR: Could not change directory to {dir:?}: {e}"));
     }
     r
-}
-
-/**
-Convert a Duration into a short human-readable string like `[Dd][Hh][Mm][Ss]`
-*/
-fn human_duration(duration: chrono::Duration) -> String {
-    fn f(n: i64, abbr: &str) -> Option<String> {
-        if n != 0 {
-            Some(format!("{n}{abbr}"))
-        } else if abbr == "s" {
-            Some(String::from("0s"))
-        } else {
-            None
-        }
-    }
-    [
-        (duration.num_days(), "d"),
-        (duration.num_hours(), "h"),
-        (duration.num_minutes(), "m"),
-        (duration.num_seconds(), "s"),
-    ]
-    .iter()
-    .filter_map(|x| f(x.0, x.1))
-    .collect::<Vec<String>>()
-    .join("")
 }
 
 #[cfg(unix)]
