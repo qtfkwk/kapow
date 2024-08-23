@@ -1,6 +1,57 @@
-# build
+# all
 
 * clippy
+* test
+* build
+* doc
+
+# check
+
+* outdated
+* audit
+
+# update
+
+* update-toml
+* update-lock
+
+# run
+
+* `target/release/{dirname}`
+
+```
+target/release/{dirname}
+```
+
+# clippy
+
+* `Cargo.lock`
+* `Cargo.toml`
+* `**/*.rs`
+
+```
+cargo clippy -- -D clippy::all
+```
+
+# test
+
+* `Cargo.lock`
+* `Cargo.toml`
+* `**/*.rs`
+
+```
+cargo test
+```
+
+# build
+
+* `target/release/{dirname}`
+
+# `target/release/{dirname}`
+
+* `Cargo.lock`
+* `Cargo.toml`
+* `**/*.rs`
 * `README.md`
 
 ```
@@ -12,40 +63,42 @@ cargo build --release
 * `t/README.md`
 * `Cargo.toml`
 * `CHANGELOG.md`
-* `src/**/*.rs`
+* `**/*.rs`
 
 ```
 cargo build --release
-
 kapow t/VERSION.t.md >t/VERSION.md
 kapow t/USAGE.t.md >t/USAGE.md
-
 kapow {0} >{target}
 ```
 
-# clippy
+# doc
 
 ```
-cargo clippy -- -D clippy::all
+cargo doc
 ```
 
-# test
+# outdated
 
 ```
-cargo test
+cargo outdated --exit-code=1
 ```
 
-# check
+# audit
 
 ```
-cargo outdated --exit-code 1
 cargo audit
 ```
 
-# update
+# update-toml
 
 ```
-cargo upgrade --incompatible
+cargo upgrade -i
+```
+
+# update-lock
+
+```
 cargo update
 ```
 
@@ -60,21 +113,19 @@ cargo install --path .
 # uninstall
 
 ```
-cargo uninstall $(toml get -r Cargo.toml package.name)
+cargo uninstall {dirname}
 ```
 
 # install-deps
 
 ```
-cargo install cargo-audit cargo-edit cargo-outdated cocomo kapow tokei toml-cli
+cargo install cargo-audit cargo-edit cargo-outdated cocomo dtg kapow tokei toml-cli
 ```
 
 # clean
 
 ```
 cargo clean
-
-rm -f .watch1 .watch2
 ```
 
 # cocomo
@@ -106,6 +157,6 @@ git push --tags
 
 * update
 * check
-* build
+* all
 * install
 
