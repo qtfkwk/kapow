@@ -52,10 +52,10 @@ and custom format
 `` `\!today` `` | `!today` | Current date in UTC / RFC 3339
 `` `\!today:local` `` | `!today:local` | Current date in local timezone
 `` `\!today:MST7MDT` `` | `!today:MST7MDT` | Current date in custom timezone
-`` `\!today:MST7MDT:%v` `` | `!today:MST7MDT:%v` | Current date in custom \
+`` `\!today:MST7MDT:%e-%b-%Y` `` | `!today:MST7MDT:%e-%b-%Y` | Current date in custom \
 timezone and format
 `` `\!today:US/Hawaii` `` | `!today:US/Hawaii` | Current date in custom locale
-`` `\!today:US/Hawaii:%x` `` | `!today:US/Hawaii:%x` | Current date in custom \
+`` `\!today:US/Hawaii:%m/%d/%y` `` | `!today:US/Hawaii:%m/%d/%y` | Current date in custom \
 locale and format
 `` `\!today:UTC:%A` `` | `!today:UTC:%A` | Current date in UTC and custom format
 

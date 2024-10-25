@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{builder::Styles, Parser};
 use dtg_lib::{tz, Dtg, Format};
 use lazy_static::lazy_static;
 use path_slash::PathExt;
@@ -25,9 +25,18 @@ macro_rules! exit {
     });
 }
 
+const STYLES: Styles = Styles::styled()
+    .header(clap_cargo::style::HEADER)
+    .usage(clap_cargo::style::USAGE)
+    .literal(clap_cargo::style::LITERAL)
+    .placeholder(clap_cargo::style::PLACEHOLDER)
+    .error(clap_cargo::style::ERROR)
+    .valid(clap_cargo::style::VALID)
+    .invalid(clap_cargo::style::INVALID);
+
 /// KAPOW!
 #[derive(Parser)]
-#[command(version, max_term_width = 80)]
+#[command(version, max_term_width = 80, styles = STYLES)]
 struct Cli {
     /// Flags (comma-separated list of flags to enable)
     #[arg(short)]

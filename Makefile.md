@@ -67,9 +67,9 @@ cargo build --release
 
 ```
 cargo build --release
-kapow t/VERSION.t.md >t/VERSION.md
-kapow t/USAGE.t.md >t/USAGE.md
-kapow {0} >{target}
+./target/release/kapow t/VERSION.t.md >t/VERSION.md
+./target/release/kapow t/USAGE.t.md >t/USAGE.md
+./target/release/kapow {0} >{target}
 ```
 
 # doc
