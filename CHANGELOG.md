@@ -40,6 +40,7 @@
 * 2.20.0 (2024-08-22): Remove [`chrono`] dependency; add `commit` target to makefile; fix makefile; update dependencies
     * 2.20.1 (2024-08-23): Update dependencies; fix makefile
 * 2.21.0 (2024-10-24): Update dependencies
+    * 2.21.1 (2024-12-04): Update dependencies
 
 [`bat`]: https://crates.io/crates/bat
 [`termwrap`]: https://crates.io/crates/termwrap
