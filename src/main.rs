@@ -1,5 +1,5 @@
-use clap::{builder::Styles, Parser};
-use dtg_lib::{tz, Dtg, Format};
+use clap::{Parser, builder::Styles};
+use dtg_lib::{Dtg, Format, tz};
 use lazy_static::lazy_static;
 use path_slash::PathExt;
 use regex::{Captures, Regex};
