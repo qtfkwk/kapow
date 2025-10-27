@@ -1,6 +1,6 @@
 [package]
 name = "kapow"
-version = "2.22.1"
+version = "2.22.2"
 edition = "2024"
 authors = ["qtfkwk <qtfkwk@gmail.com>"]
 repository = "https://github.com/qtfkwk/kapow"
@@ -19,4 +19,4 @@ termwrap = "0.2.1"
 which = "8.0.0"
 
 [target.'cfg(unix)'.dependencies]
-pager = "0.16.1"
+pager2 = "0.6.1"

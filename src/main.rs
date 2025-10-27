@@ -10,7 +10,7 @@ use termwrap::termwrap;
 use which::which;
 
 #[cfg(unix)]
-use pager::Pager;
+use pager2::Pager;
 
 /**
 Optionally print a message to stderr and exit with the given code
