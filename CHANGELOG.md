@@ -44,6 +44,7 @@
     * 2.21.2 (2025-02-20): Update dependencies
     * 2.21.3 (2025-04-16): Update dependencies
 * 2.22.0 (2025-08-28): Update dependencies; 2024 edition
+    * 2.22.1 (2025-10-27): Update dependencies
 
 [`bat`]: https://crates.io/crates/bat
 [`termwrap`]: https://crates.io/crates/termwrap
