@@ -1,13 +1,18 @@
-use clap::{Parser, builder::Styles};
-use dtg_lib::{Dtg, Format, tz};
-use lazy_static::lazy_static;
-use path_slash::PathExt;
-use regex::{Captures, Regex};
-use std::collections::HashSet;
-use std::io::BufRead;
-use std::path::{Path, PathBuf};
-use termwrap::termwrap;
-use which::which;
+use {
+    clap::Parser,
+    clap_cargo::style::CLAP_STYLING,
+    dtg_lib::{Dtg, Format, tz},
+    path_slash::PathExt,
+    regex::{Captures, Regex},
+    std::{
+        collections::HashSet,
+        io::BufRead,
+        path::{Path, PathBuf},
+        sync::LazyLock,
+    },
+    termwrap::termwrap,
+    which::which,
+};
 
 #[cfg(unix)]
 use pager2::Pager;
@@ -25,18 +30,10 @@ macro_rules! exit {
     });
 }
 
-const STYLES: Styles = Styles::styled()
-    .header(clap_cargo::style::HEADER)
-    .usage(clap_cargo::style::USAGE)
-    .literal(clap_cargo::style::LITERAL)
-    .placeholder(clap_cargo::style::PLACEHOLDER)
-    .error(clap_cargo::style::ERROR)
-    .valid(clap_cargo::style::VALID)
-    .invalid(clap_cargo::style::INVALID);
-
 /// KAPOW!
 #[derive(Parser)]
-#[command(version, max_term_width = 80, styles = STYLES)]
+#[command(version, max_term_width = 80, styles = CLAP_STYLING)]
+#[allow(clippy::struct_excessive_bools)]
 struct Cli {
     /// Flags (comma-separated list of flags to enable)
     #[arg(short)]
@@ -87,19 +84,18 @@ struct Cli {
     input_files: Vec<PathBuf>,
 }
 
-lazy_static! {
-    /// Regular expression for `!now` directive
-    static ref NOW: Regex = Regex::new(r"`!now:([^`]*)`").unwrap();
+/// Regular expression for `!now` directive
+static NOW: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"`!now:([^`]*)`").unwrap());
 
-    /// Regular expression for `!today` directive
-    static ref TODAY: Regex = Regex::new(r"`!today:([^`]*)`").unwrap();
+/// Regular expression for `!today` directive
+static TODAY: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"`!today:([^`]*)`").unwrap());
 
-    /// Regular expression for a markdown code block fence
-    static ref FENCE_RE: Regex = Regex::new(r"^(\s*(```+|~~~+))").unwrap();
+/// Regular expression for a markdown code block fence
+static FENCE_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^(\s*(```+|~~~+))").unwrap());
 
-    /// Regular expression for a markdown image `![alt](path "title")`
-    static ref IMAGE: Regex = Regex::new(r#"!\[([^\]]*)\]\(([^\) ]+)( *"["]*"|)\)"#).unwrap();
-}
+/// Regular expression for a markdown image `![alt](path "title")`
+static IMAGE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r#"!\[([^\]]*)\]\(([^\) ]+)( *"["]*"|)\)"#).unwrap());
 
 /**
 Main function
@@ -128,7 +124,7 @@ fn main() {
     let active_flags = if let Some(flags) = cli.flags {
         flags
             .split(',')
-            .map(|x| x.to_string())
+            .map(ToString::to_string)
             .collect::<HashSet<String>>()
     } else {
         HashSet::new()
@@ -162,21 +158,20 @@ fn main() {
                     &now_x,
                     &today,
                     &today_local,
-                    &fence,
+                    fence.as_ref(),
                     cli.ignore_run_fail,
                     cli.wrap,
                     &cli.continuation,
                     !cli.no_relative_images,
                     &root_dir,
                     &root_dir,
-                    &prev_line,
+                    prev_line.as_ref(),
                 );
             }
-            continue;
         } else {
             (fence, prev_line) = process_file(
                 input_file,
-                fence,
+                fence.as_ref(),
                 &mut command_q,
                 &mut flags,
                 &active_flags,
@@ -192,7 +187,7 @@ fn main() {
                 !cli.no_relative_images,
                 &root_dir,
                 &root_dir,
-                &prev_line,
+                prev_line.as_ref(),
             );
         }
     }
@@ -201,7 +196,7 @@ fn main() {
 #[allow(clippy::too_many_arguments)]
 fn process_file(
     input_file: &Path,
-    fence: Option<String>,
+    fence: Option<&String>,
     command_q: &mut Vec<String>,
     flags: &mut Vec<String>,
     active_flags: &HashSet<String>,
@@ -217,10 +212,10 @@ fn process_file(
     relative_images: bool,
     dir: &Path,
     root_dir: &Path,
-    prev_line: &Option<String>,
+    prev_line: Option<&String>,
 ) -> (Option<String>, Option<String>) {
-    let mut fence = fence.clone();
-    let mut prev_line = prev_line.clone();
+    let mut fence = fence.cloned();
+    let mut prev_line = prev_line.cloned();
     match std::fs::File::open(input_file) {
         Ok(f) => {
             let f = std::io::BufReader::new(f);
@@ -248,14 +243,14 @@ fn process_file(
                     now_x,
                     today,
                     today_local,
-                    &fence,
+                    fence.as_ref(),
                     ignore_run_fail,
                     wrap,
                     continuation,
                     relative_images,
                     dir,
                     root_dir,
-                    &prev_line,
+                    prev_line.as_ref(),
                 );
             }
             cd(&orig_dir);
@@ -280,7 +275,7 @@ fn update_fence(line: &str, fence: Option<String>) -> Option<String> {
     fence
 }
 
-#[allow(clippy::too_many_arguments)]
+#[allow(clippy::too_many_arguments, clippy::too_many_lines)]
 fn process_line(
     line: &str,
     command_q: &mut Vec<String>,
@@ -292,17 +287,17 @@ fn process_line(
     now_x: &str,
     today: &str,
     today_local: &str,
-    fence: &Option<String>,
+    fence: Option<&String>,
     ignore_run_fail: bool,
     wrap: usize,
     continuation: &str,
     relative_images: bool,
     dir: &Path,
     root_dir: &Path,
-    prev_line: &Option<String>,
+    prev_line: Option<&String>,
 ) -> Option<String> {
     let mut line = line.to_string();
-    let mut prev_line = prev_line.clone();
+    let mut prev_line = prev_line.cloned();
     if !flags.is_empty() {
         let flag = flags.last().unwrap();
         if line != format!("!stop:{flag}") {
@@ -317,7 +312,7 @@ fn process_line(
             if let Some(command) = line.strip_suffix('\\') {
                 command_q.push(command.to_string());
             } else {
-                command_q.push(line.to_string());
+                command_q.push(line.clone());
                 run(
                     command_q.drain(..).collect::<String>(),
                     fence,
@@ -341,7 +336,7 @@ fn process_line(
             {
                 (_, prev_line) = process_file(
                     &PathBuf::from(path),
-                    fence.clone(),
+                    fence,
                     command_q,
                     flags,
                     active_flags,
@@ -357,7 +352,7 @@ fn process_line(
                     relative_images,
                     dir,
                     root_dir,
-                    &prev_line,
+                    prev_line.as_ref(),
                 );
             }
             return prev_line;
@@ -371,6 +366,7 @@ fn process_line(
             let flag = flag.to_string();
             if !active_flags.contains(&flag) {
                 let last = flags.pop().unwrap();
+                #[allow(clippy::manual_assert)]
                 if flag != last {
                     panic!();
                 }
@@ -490,7 +486,7 @@ Run a command and print its stderr and stdout
 */
 fn run<T: AsRef<str>>(
     command: T,
-    fence: &Option<String>,
+    fence: Option<&String>,
     ignore_run_fail: bool,
     wrap: usize,
     continuation: &str,
