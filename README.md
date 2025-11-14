@@ -54,22 +54,22 @@ Notes:
 Directive | Example | Description
 ---|---|---
 `` `!elapsed` `` | 0s | Processing time
-`` `!now` `` | 2025-11-12T21:21:35Z | Current date/time in UTC / RFC 3339
-`` `!now:local` `` | Wed 12 Nov 2025 16:21:35 EST | Current date/time in local timezone
-`` `!now:local:%A %H:%M` `` | Wednesday 16:21 | Current date/time in local timezone and custom format
-`` `!now:MST7MDT` `` | Wed 12 Nov 2025 14:21:35 MST | Current date/time in custom timezone
-`` `!now:MST7MDT:%A %H:%M` `` | Wednesday 14:21 | Current date/time in custom timezone and format
-`` `!now:US/Hawaii` `` | Wed 12 Nov 2025 11:21:35 HST | Current date/time in custom locale
-`` `!now:US/Hawaii:%A %H:%M` `` | Wednesday 11:21 | Current date/time in custom locale and format
-`` `!now:UTC:%A %H:%M` `` | Wednesday 21:21 | Current date/time in UTC and custom format
-`` `!now:x` `` | XjABLLZ | Current date/time in "x" format
-`` `!today` `` | 2025-11-12 | Current date in UTC / RFC 3339
-`` `!today:local` `` | 2025-11-12 | Current date in local timezone
-`` `!today:MST7MDT` `` | 2025-11-12 | Current date in custom timezone
-`` `!today:MST7MDT:%e-%b-%Y` `` | 12-Nov-2025 | Current date in custom timezone and format
-`` `!today:US/Hawaii` `` | 2025-11-12 | Current date in custom locale
-`` `!today:US/Hawaii:%m/%d/%y` `` | 11/12/25 | Current date in custom locale and format
-`` `!today:UTC:%A` `` | Wednesday | Current date in UTC and custom format
+`` `!now` `` | 2025-11-14T12:36:58Z | Current date/time in UTC / RFC 3339
+`` `!now:local` `` | Fri 14 Nov 2025 07:36:58 EST | Current date/time in local timezone
+`` `!now:local:%A %H:%M` `` | Friday 07:36 | Current date/time in local timezone and custom format
+`` `!now:MST7MDT` `` | Fri 14 Nov 2025 05:36:58 MST | Current date/time in custom timezone
+`` `!now:MST7MDT:%A %H:%M` `` | Friday 05:36 | Current date/time in custom timezone and format
+`` `!now:US/Hawaii` `` | Fri 14 Nov 2025 02:36:58 HST | Current date/time in custom locale
+`` `!now:US/Hawaii:%A %H:%M` `` | Friday 02:36 | Current date/time in custom locale and format
+`` `!now:UTC:%A %H:%M` `` | Friday 12:36 | Current date/time in UTC and custom format
+`` `!now:x` `` | XjADCaw | Current date/time in "x" format
+`` `!today` `` | 2025-11-14 | Current date in UTC / RFC 3339
+`` `!today:local` `` | 2025-11-14 | Current date in local timezone
+`` `!today:MST7MDT` `` | 2025-11-14 | Current date in custom timezone
+`` `!today:MST7MDT:%e-%b-%Y` `` | 14-Nov-2025 | Current date in custom timezone and format
+`` `!today:US/Hawaii` `` | 2025-11-14 | Current date in custom locale
+`` `!today:US/Hawaii:%m/%d/%y` `` | 11/14/25 | Current date in custom locale and format
+`` `!today:UTC:%A` `` | Friday | Current date in UTC and custom format
 
 * Span directives must be placed inside a code span and may appear zero or more
   times in any line.
@@ -103,7 +103,7 @@ highlighting and paging (if on a Linux, macOS, or UNIX system; see the `-p`,
 
 ```text
 $ kapow -V
-kapow 2.22.3
+kapow 2.22.4
 ```
 
 ```text

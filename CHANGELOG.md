@@ -47,6 +47,7 @@
     * 2.22.1 (2025-10-27): Update dependencies
     * 2.22.2 (2025-10-27): Use `pager2`
     * 2.22.3 (2025-11-12): Update dependencies; use [`clap-cargo`] `CLAP_STYLING`; clippy fixes
+    * 2.22.4 (2025-11-14): Update dependencies; add `clippy::pedantic` to `cargo clippy` command in the `clippy` target in the makefile
 
 [`bat`]: https://crates.io/crates/bat
 [`clap-cargo`]: https://crates.io/crates/clap-cargo
